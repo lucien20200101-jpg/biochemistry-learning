@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import HeroSection from '../components/HeroSection.vue'
 
 const router = useRouter()
 
@@ -33,27 +34,8 @@ const features = [
 
 <template>
   <div class="home">
-    <!-- Hero Section -->
-    <section class="hero section-lg">
-      <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">系统掌握生物化学代谢路径</h1>
-          <p class="hero-subtitle">
-            从糖酵解到氧化磷酸化，以结构化方式学习八大核心代谢路径。<br />
-            图文详解 · 代谢网络 · 练习巩固，一站式学习平台。
-          </p>
-          <div class="hero-actions">
-            <router-link to="/pathways" class="btn btn-primary btn-lg">
-              开始学习
-              <span class="btn-arrow">→</span>
-            </router-link>
-            <router-link to="/network" class="btn btn-outline btn-lg">
-              浏览代谢网络
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </section>
+    <!-- Claymation Hero Section -->
+    <HeroSection />
 
     <!-- Features Section -->
     <section class="features section">
@@ -102,43 +84,6 @@ const features = [
 </template>
 
 <style scoped>
-/* --- Hero --- */
-.hero-content {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: var(--text);
-  margin-bottom: 16px;
-}
-
-.hero-subtitle {
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  margin-bottom: 32px;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-arrow {
-  transition: transform 0.15s ease;
-}
-
-.btn:hover .btn-arrow {
-  transform: translateX(3px);
-}
-
 /* --- Feature Cards --- */
 .feature-card {
   cursor: pointer;
@@ -197,13 +142,4 @@ const features = [
   margin-top: 4px;
 }
 
-/* --- Responsive --- */
-@media (max-width: 640px) {
-  .hero-title {
-    font-size: 1.875rem;
-  }
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-}
 </style>
