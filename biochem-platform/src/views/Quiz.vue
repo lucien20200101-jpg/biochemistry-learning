@@ -1,96 +1,287 @@
 <script setup>
-const quizCategories = [
-  {
-    icon: '🧬',
-    title: '糖代谢',
-    count: 25,
-    topics: ['糖酵解', '糖异生', '糖原代谢', '磷酸戊糖途径'],
-  },
-  {
-    icon: '🔋',
-    title: '能量代谢',
-    count: 30,
-    topics: ['TCA 循环', '氧化磷酸化', '电子传递链', 'ATP 合成机制'],
-  },
-  {
-    icon: '🧈',
-    title: '脂质代谢',
-    count: 20,
-    topics: ['脂肪酸氧化', '脂肪酸合成', '胆固醇代谢', '酮体生成'],
-  },
-  {
-    icon: '🧱',
-    title: '氨基酸与含氮代谢',
-    count: 25,
-    topics: ['氨基酸分解', '尿素循环', '一碳代谢', '核苷酸合成'],
-  },
-  {
-    icon: '🎛️',
-    title: '代谢调控',
-    count: 15,
-    topics: ['别构调节', '共价修饰', '激素调控', '代谢整合'],
-  },
-  {
-    icon: '🏥',
-    title: '临床关联',
-    count: 15,
-    topics: ['代谢性疾病', '酶缺陷病', '药物靶点', '实验室指标'],
-  },
-]
+import { computed } from 'vue'
+import { useQuizStore } from '../stores/quiz'
+
+const store = useQuizStore()
+
+const allFinished = computed(() => {
+  return store.totalQuestions > 0 && store.answeredCount === store.totalQuestions
+})
+
+function handleStart(count) {
+  store.startQuiz(count)
+}
+
+function handleStartWrong() {
+  store.startWrongQuiz()
+}
+
+function getOptionLabel(index) {
+  return String.fromCharCode(65 + index)
+}
+
+function optionClass(question, index) {
+  const isSelected = store.userAnswers[question.id] === index
+  const isSubmitted = store.submitted[question.id]
+  if (!isSubmitted) {
+    return isSelected ? 'option-selected' : ''
+  }
+  // After submission
+  if (index === question.answer) return 'option-correct'
+  if (isSelected && index !== question.answer) return 'option-wrong'
+  return 'option-disabled'
+}
 </script>
 
 <template>
   <div class="quiz-page">
     <div class="container">
-      <!-- Header -->
-      <div class="page-header">
-        <div class="header-top">
-          <div>
-            <h1>练习题库</h1>
-            <p class="page-subtitle">
-              通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联。
-            </p>
-          </div>
-          <button class="btn btn-primary" disabled>
-            开始随机练习
-          </button>
-        </div>
-      </div>
 
-      <!-- Quiz Category Grid -->
-      <div class="grid grid-2 quiz-grid">
-        <div
-          v-for="cat in quizCategories"
-          :key="cat.title"
-          class="card card-hover quiz-card"
-        >
-          <div class="card-body">
-            <div class="quiz-top">
-              <span class="quiz-icon">{{ cat.icon }}</span>
-              <span class="quiz-count">{{ cat.count }} 题</span>
+      <!-- ========== Landing: chapter select + start ========== -->
+      <template v-if="!store.isQuizActive">
+        <div class="page-header">
+          <div class="header-top">
+            <div>
+              <h1>练习题库</h1>
+              <p class="page-subtitle">
+                通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联。
+              </p>
             </div>
-            <h3 class="quiz-title">{{ cat.title }}</h3>
-            <div class="quiz-topics">
-              <span v-for="topic in cat.topics" :key="topic" class="badge">
-                {{ topic }}
+          </div>
+        </div>
+
+        <!-- Chapter Filter -->
+        <div class="filter-bar card">
+          <div class="card-body filter-body">
+            <span class="filter-label">选择章节</span>
+            <div class="filter-chips">
+              <button
+                v-for="ch in store.chapters"
+                :key="ch"
+                class="chip"
+                :class="{ 'chip-active': store.selectedChapter === ch }"
+                @click="store.setChapter(ch)"
+              >
+                {{ ch || '全部' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Start Actions -->
+        <div class="start-actions">
+          <div class="card card-hover start-card" @click="handleStart(5)">
+            <div class="card-body start-body">
+              <div class="start-icon">🎯</div>
+              <h3>随机 5 题</h3>
+              <p>{{ store.filteredQuestions.length }} 题可用</p>
+              <span class="btn btn-primary btn-sm">开始练习</span>
+            </div>
+          </div>
+
+          <div class="card card-hover start-card" @click="handleStart(store.filteredQuestions.length)">
+            <div class="card-body start-body">
+              <div class="start-icon">📋</div>
+              <h3>全部练习</h3>
+              <p>{{ store.filteredQuestions.length }} 题</p>
+              <span class="btn btn-outline btn-sm">开始练习</span>
+            </div>
+          </div>
+
+          <div
+            class="card start-card"
+            :class="{ 'card-hover': store.wrongQuestions.length > 0, 'start-card-disabled': store.wrongQuestions.length === 0 }"
+            @click="store.wrongQuestions.length > 0 && handleStartWrong()"
+          >
+            <div class="card-body start-body">
+              <div class="start-icon">🔴</div>
+              <h3>错题回顾</h3>
+              <p v-if="store.wrongQuestions.length > 0">{{ store.wrongQuestions.length }} 道错题</p>
+              <p v-else class="text-muted">暂无错题记录</p>
+              <span
+                class="btn btn-sm"
+                :class="store.wrongQuestions.length > 0 ? 'btn-outline' : 'btn-ghost'"
+                :style="store.wrongQuestions.length === 0 ? 'opacity:0.4;pointer-events:none' : ''"
+              >
+                开始回顾
               </span>
             </div>
-            <button class="btn btn-outline btn-sm" disabled>
-              开始练习
-            </button>
           </div>
         </div>
-      </div>
 
-      <!-- Placeholder notice -->
-      <div class="placeholder-notice">
-        <p>题库数据正在整理中，即将在后续版本中上线。敬请期待。</p>
-      </div>
+        <!-- Empty State for no questions -->
+        <div v-if="store.filteredQuestions.length === 0" class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>该章节暂无题目</h3>
+          <p>请选择其他章节或等待题库更新。</p>
+        </div>
+      </template>
+
+      <!-- ========== Quiz Active ========== -->
+      <template v-else>
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+          <button class="btn btn-ghost btn-sm" @click="store.resetQuiz()">
+            &larr; 返回题库
+          </button>
+          <div class="quiz-progress-info">
+            <span class="progress-text">
+              {{ store.currentIndex + 1 }} / {{ store.totalQuestions }}
+            </span>
+            <span v-if="allFinished" class="score-text">
+              得分：{{ store.correctCount }} / {{ store.totalQuestions }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar-track">
+          <div
+            class="progress-bar-fill"
+            :style="{ width: ((store.answeredCount / store.totalQuestions) * 100) + '%' }"
+          ></div>
+        </div>
+
+        <!-- Question Card -->
+        <div v-if="store.currentQuestion" class="question-area">
+          <div class="card question-card">
+            <div class="card-body">
+              <!-- Question meta -->
+              <div class="q-meta">
+                <span class="badge">{{ store.currentQuestion.chapter }}</span>
+                <span class="badge">{{ store.currentQuestion.topic }}</span>
+                <span class="badge" :class="{
+                  'badge-primary': store.currentQuestion.difficulty === '进阶'
+                }">
+                  {{ store.currentQuestion.difficulty }}
+                </span>
+              </div>
+
+              <!-- Question text -->
+              <h3 class="q-text">{{ store.currentQuestion.question }}</h3>
+
+              <!-- Options -->
+              <div class="options-list">
+                <button
+                  v-for="(opt, idx) in store.currentQuestion.options"
+                  :key="idx"
+                  class="option-btn"
+                  :class="optionClass(store.currentQuestion, idx)"
+                  :disabled="!!store.submitted[store.currentQuestion.id]"
+                  @click="store.selectAnswer(store.currentQuestion.id, idx)"
+                >
+                  <span class="option-label">{{ getOptionLabel(idx) }}</span>
+                  <span class="option-text">{{ opt }}</span>
+                </button>
+              </div>
+
+              <!-- Submit / Explanation -->
+              <div class="q-actions">
+                <button
+                  v-if="!store.submitted[store.currentQuestion.id]"
+                  class="btn btn-primary"
+                  :disabled="store.userAnswers[store.currentQuestion.id] === undefined"
+                  @click="store.submitAnswer(store.currentQuestion.id)"
+                >
+                  提交答案
+                </button>
+
+                <!-- Explanation after submit -->
+                <div
+                  v-if="store.submitted[store.currentQuestion.id]"
+                  class="explanation-box"
+                  :class="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer ? 'explanation-correct' : 'explanation-wrong'"
+                >
+                  <div class="explanation-header">
+                    <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
+                      回答正确
+                    </span>
+                    <span v-else class="explanation-badge wrong">
+                      回答错误 — 正确答案：{{ getOptionLabel(store.currentQuestion.answer) }}
+                    </span>
+                  </div>
+                  <p class="explanation-text">{{ store.currentQuestion.explanation }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation -->
+          <div class="q-nav">
+            <button
+              class="btn btn-outline btn-sm"
+              :disabled="store.currentIndex === 0"
+              @click="store.prevQuestion()"
+            >
+              &larr; 上一题
+            </button>
+
+            <!-- Question dots -->
+            <div class="q-dots">
+              <button
+                v-for="(q, i) in store.quizQuestions"
+                :key="q.id"
+                class="q-dot"
+                :class="{
+                  'dot-current': i === store.currentIndex,
+                  'dot-correct': store.submitted[q.id] && store.userAnswers[q.id] === q.answer,
+                  'dot-wrong': store.submitted[q.id] && store.userAnswers[q.id] !== q.answer,
+                  'dot-answered': !store.submitted[q.id] && store.userAnswers[q.id] !== undefined,
+                }"
+                @click="store.goToQuestion(i)"
+              >
+                {{ i + 1 }}
+              </button>
+            </div>
+
+            <button
+              class="btn btn-outline btn-sm"
+              :disabled="store.currentIndex === store.totalQuestions - 1"
+              @click="store.nextQuestion()"
+            >
+              下一题 &rarr;
+            </button>
+          </div>
+
+          <!-- Summary when all done -->
+          <div v-if="allFinished" class="summary-card card">
+            <div class="card-body summary-body">
+              <h3>练习完成</h3>
+              <div class="summary-stats">
+                <div class="summary-stat">
+                  <div class="stat-num">{{ store.totalQuestions }}</div>
+                  <div class="stat-lbl">总题数</div>
+                </div>
+                <div class="summary-stat">
+                  <div class="stat-num correct-num">{{ store.correctCount }}</div>
+                  <div class="stat-lbl">正确</div>
+                </div>
+                <div class="summary-stat">
+                  <div class="stat-num wrong-num">{{ store.totalQuestions - store.correctCount }}</div>
+                  <div class="stat-lbl">错误</div>
+                </div>
+              </div>
+              <div class="summary-actions">
+                <button class="btn btn-primary" @click="store.resetQuiz()">返回题库</button>
+                <button
+                  v-if="store.wrongQuestions.length > 0"
+                  class="btn btn-outline"
+                  @click="handleStartWrong()"
+                >
+                  回顾错题（{{ store.wrongQuestions.length }}）
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+
     </div>
   </div>
 </template>
 
 <style scoped>
+/* --- Page Header --- */
 .page-header {
   padding-top: 16px;
   padding-bottom: 32px;
@@ -113,71 +304,463 @@ const quizCategories = [
   max-width: 560px;
 }
 
-/* --- Quiz Cards --- */
-.quiz-grid {
-  gap: 20px;
+/* --- Filter Bar --- */
+.filter-bar {
+  margin-bottom: 24px;
 }
 
-.quiz-card .card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 24px;
-}
-
-.quiz-top {
+.filter-body {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  flex-wrap: wrap;
 }
 
-.quiz-icon {
-  font-size: 1.75rem;
-}
-
-.quiz-count {
-  font-size: 0.8125rem;
+.filter-label {
+  font-size: 0.875rem;
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text);
+  white-space: nowrap;
 }
 
-.quiz-title {
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  padding: 6px 16px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+
+.chip:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
+}
+
+.chip-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.chip-active:hover {
+  background: var(--primary-hover);
+  color: var(--primary-foreground);
+}
+
+/* --- Start Actions --- */
+.start-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+
+.start-card {
+  cursor: pointer;
+}
+
+.start-card-disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.start-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 32px 24px;
+}
+
+.start-icon {
+  font-size: 2rem;
+}
+
+.start-body h3 {
   font-size: 1.0625rem;
   font-weight: 600;
 }
 
-.quiz-topics {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+.start-body p {
+  font-size: 0.8125rem;
+  color: var(--muted);
 }
 
-.quiz-topics .badge {
-  font-size: 0.75rem;
-  padding: 3px 10px;
-}
-
-.quiz-card .btn {
-  align-self: flex-start;
+.start-body .btn {
   margin-top: 4px;
 }
 
-/* --- Placeholder --- */
-.placeholder-notice {
+/* --- Empty State --- */
+.empty-state {
   text-align: center;
-  padding: 40px 0 16px;
+  padding: 60px 24px;
 }
 
-.placeholder-notice p {
-  font-size: 0.875rem;
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.7;
+}
+
+.empty-state h3 {
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.empty-state p {
   color: var(--muted);
-  font-style: italic;
+  font-size: 0.9375rem;
+}
+
+/* --- Quiz Header --- */
+.quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-top: 8px;
+}
+
+.quiz-progress-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.score-text {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* --- Progress Bar --- */
+.progress-bar-track {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* --- Question Card --- */
+.question-card .card-body {
+  padding: 32px;
+}
+
+.q-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.q-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.65;
+  margin-bottom: 24px;
+  color: var(--text);
+}
+
+/* --- Options --- */
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.option-btn {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--card);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.option-btn:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.option-label {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.option-text {
+  padding-top: 3px;
+}
+
+/* Option States */
+.option-selected {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.option-selected .option-label {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.option-correct {
+  border-color: var(--success);
+  background: #f0fdf4;
+}
+
+.option-correct .option-label {
+  background: var(--success);
+  color: #fff;
+}
+
+.option-wrong {
+  border-color: var(--destructive);
+  background: #fef2f2;
+}
+
+.option-wrong .option-label {
+  background: var(--destructive);
+  color: #fff;
+}
+
+.option-disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- Q Actions --- */
+.q-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* --- Explanation --- */
+.explanation-box {
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
+
+.explanation-correct {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.explanation-wrong {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.explanation-header {
+  margin-bottom: 10px;
+}
+
+.explanation-badge {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.explanation-badge.correct {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.explanation-badge.wrong {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.explanation-text {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+}
+
+/* --- Q Navigation --- */
+.q-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.q-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.q-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+}
+
+.q-dot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.dot-current {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.dot-correct {
+  border-color: var(--success);
+  background: #dcfce7;
+  color: #166534;
+}
+
+.dot-wrong {
+  border-color: var(--destructive);
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.dot-answered {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+  opacity: 0.6;
+}
+
+/* --- Summary Card --- */
+.summary-card {
+  margin-top: 24px;
+}
+
+.summary-body {
+  text-align: center;
+  padding: 32px;
+}
+
+.summary-body h3 {
+  font-size: 1.25rem;
+  margin-bottom: 24px;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 24px;
+}
+
+.stat-num {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.correct-num {
+  color: var(--success);
+}
+
+.wrong-num {
+  color: var(--destructive);
+}
+
+.stat-lbl {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.summary-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
 }
 
 /* --- Responsive --- */
 @media (max-width: 640px) {
   .header-top {
     flex-direction: column;
+  }
+
+  .start-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .question-card .card-body {
+    padding: 20px;
+  }
+
+  .q-nav {
+    flex-direction: column;
+  }
+
+  .summary-stats {
+    gap: 24px;
   }
 }
 </style>
