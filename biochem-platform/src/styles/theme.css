@@ -179,6 +179,12 @@ p {
   transform: scale(0.98);
 }
 
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Primary */
 .btn-primary {
   background-color: var(--primary);
