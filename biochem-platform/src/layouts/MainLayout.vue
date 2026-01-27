@@ -32,6 +32,9 @@ const navLinks = [
             {{ link.label }}
           </router-link>
         </nav>
+        <router-link to="/pathways" class="btn btn-primary btn-sm nav-cta">
+          开始学习
+        </router-link>
       </div>
     </header>
 
@@ -62,10 +65,9 @@ const navLinks = [
   top: 0;
   z-index: 100;
   height: var(--nav-height);
-  background: var(--card);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
 }
 
 .nav-inner {
@@ -97,7 +99,7 @@ const navLinks = [
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .nav-link {
@@ -107,7 +109,7 @@ const navLinks = [
   color: var(--text-secondary);
   text-decoration: none;
   border-radius: var(--radius-sm);
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition: color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .nav-link:hover {
@@ -118,13 +120,18 @@ const navLinks = [
 .nav-link.active {
   color: var(--text);
   background-color: var(--bg-secondary);
+  box-shadow: inset 0 -2px 0 var(--primary);
+}
+
+.nav-cta {
+  margin-left: 12px;
 }
 
 /* --- Main Content --- */
 .main-content {
   flex: 1;
-  padding-top: 32px;
-  padding-bottom: 64px;
+  padding-top: 24px;
+  padding-bottom: 72px;
 }
 
 /* --- Footer --- */
@@ -150,6 +157,9 @@ const navLinks = [
   }
   .brand-text {
     font-size: 0.875rem;
+  }
+  .nav-cta {
+    display: none;
   }
 }
 </style>

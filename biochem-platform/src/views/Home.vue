@@ -5,50 +5,58 @@ const router = useRouter()
 
 const features = [
   {
-    icon: '📖',
-    title: '代谢图文学习',
-    description: '系统学习八大核心代谢路径，包含糖酵解、TCA 循环、氧化磷酸化等，搭配图文详解与关键步骤分析。',
-    action: '开始学习',
+    icon: '🧬',
+    title: '八大代谢路径',
+    description: '结构化学习糖酵解、TCA 循环、氧化磷酸化等八大路径，快速掌握关键反应与酶。',
+    action: '进入路径',
     actionType: 'primary',
     to: '/pathways',
   },
   {
-    icon: '🔗',
-    title: '代谢网络总览',
-    description: '以全局视角审视代谢网络，理解关键枢纽分子如 Acetyl-CoA、NADH、ATP 之间的连接与调控关系。',
+    icon: '🕸️',
+    title: '代谢网络',
+    description: '通过全局视角理解代谢通路的连接与调控，识别关键枢纽与能量流向。',
     action: '查看网络',
-    actionType: 'outline',
+    actionType: 'secondary',
     to: '/network',
   },
   {
-    icon: '✏️',
-    title: '题库练习',
-    description: '通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联等多个维度。',
+    icon: '📘',
+    title: '练习题库',
+    description: '覆盖概念辨析、能量计算、调控机制与临床关联的题库练习，随时巩固。',
     action: '进入题库',
-    actionType: 'outline',
+    actionType: 'secondary',
     to: '/quiz',
+  },
+  {
+    icon: '🗂️',
+    title: '学习进度',
+    description: '追踪近期学习记录与错题回顾，规划下一阶段的学习路径。',
+    action: '查看进度',
+    actionType: 'secondary',
+    to: '/pathways',
   },
 ]
 </script>
 
 <template>
   <div class="home">
-    <!-- Hero Section -->
-    <section class="hero section-lg">
+    <!-- Header Section -->
+    <section class="section">
       <div class="container">
-        <div class="hero-content">
-          <h1 class="hero-title">系统掌握生物化学代谢路径</h1>
-          <p class="hero-subtitle">
-            从糖酵解到氧化磷酸化，以结构化方式学习八大核心代谢路径。<br />
-            图文详解 · 代谢网络 · 练习巩固，一站式学习平台。
-          </p>
-          <div class="hero-actions">
+        <div class="page-header">
+          <div>
+            <h1 class="page-header-title">生物化学学习辅助平台</h1>
+            <p class="page-header-subtitle">
+              专注代谢路径学习的现代化平台，以清晰结构与高效练习帮助你构建完整知识体系。
+            </p>
+          </div>
+          <div class="page-header-actions">
             <router-link to="/pathways" class="btn btn-primary btn-lg">
               开始学习
-              <span class="btn-arrow">→</span>
             </router-link>
-            <router-link to="/network" class="btn btn-outline btn-lg">
-              浏览代谢网络
+            <router-link to="/quiz" class="btn btn-outline btn-lg">
+              进入题库
             </router-link>
           </div>
         </div>
@@ -58,7 +66,7 @@ const features = [
     <!-- Features Section -->
     <section class="features section">
       <div class="container">
-        <div class="features-grid grid grid-3">
+        <div class="features-grid grid grid-2">
           <div
             v-for="feature in features"
             :key="feature.title"
@@ -71,7 +79,7 @@ const features = [
               <p class="feature-desc">{{ feature.description }}</p>
               <router-link
                 :to="feature.to"
-                :class="['btn', feature.actionType === 'primary' ? 'btn-primary' : 'btn-outline']"
+                :class="['btn', feature.actionType === 'primary' ? 'btn-primary' : 'btn-secondary']"
                 @click.stop
               >
                 {{ feature.action }}
@@ -85,15 +93,27 @@ const features = [
     <!-- Stats Section -->
     <section class="stats section">
       <div class="container">
-        <div class="stats-grid grid grid-4">
-          <div class="stat-item" v-for="stat in [
-            { value: '8', label: '核心代谢路径' },
-            { value: '60+', label: '关键酶与反应' },
-            { value: '100+', label: '练习题目' },
-            { value: '∞', label: '学习可能' },
-          ]" :key="stat.label">
-            <div class="stat-value">{{ stat.value }}</div>
-            <div class="stat-label">{{ stat.label }}</div>
+        <div class="stats-grid">
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-label">今日学习</div>
+              <div class="stat-value">2 条路径</div>
+              <p class="stat-desc">糖酵解 · TCA 循环</p>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-label">近期练习</div>
+              <div class="stat-value">18 / 25 题</div>
+              <p class="stat-desc">正确率 78%，继续保持</p>
+            </div>
+          </div>
+          <div class="card stat-card">
+            <div class="card-body">
+              <div class="stat-label">推荐下一步</div>
+              <div class="stat-value">氧化磷酸化</div>
+              <p class="stat-desc">预计学习时长 25 分钟</p>
+            </div>
           </div>
         </div>
       </div>
@@ -102,43 +122,6 @@ const features = [
 </template>
 
 <style scoped>
-/* --- Hero --- */
-.hero-content {
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto;
-}
-
-.hero-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: var(--text);
-  margin-bottom: 16px;
-}
-
-.hero-subtitle {
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  line-height: 1.75;
-  margin-bottom: 32px;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-arrow {
-  transition: transform 0.15s ease;
-}
-
-.btn:hover .btn-arrow {
-  transform: translateX(3px);
-}
-
 /* --- Feature Cards --- */
 .feature-card {
   cursor: pointer;
@@ -175,35 +158,38 @@ const features = [
 }
 
 /* --- Stats --- */
-.stats {
-  border-top: 1px solid var(--border);
+.stats-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
-.stat-item {
-  text-align: center;
-  padding: 16px;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--text);
-  letter-spacing: -0.02em;
+.stat-card .card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .stat-label {
   font-size: 0.875rem;
   color: var(--muted);
-  margin-top: 4px;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
 }
 
 /* --- Responsive --- */
 @media (max-width: 640px) {
-  .hero-title {
-    font-size: 1.875rem;
-  }
-  .hero-subtitle {
-    font-size: 1rem;
+  .features-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

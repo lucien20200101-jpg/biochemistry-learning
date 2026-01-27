@@ -44,17 +44,21 @@ const quizCategories = [
     <div class="container">
       <!-- Header -->
       <div class="page-header">
-        <div class="header-top">
-          <div>
-            <h1>练习题库</h1>
-            <p class="page-subtitle">
-              通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联。
-            </p>
-          </div>
+        <div>
+          <h1 class="page-header-title">练习题库</h1>
+          <p class="page-header-subtitle">
+            通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联。
+          </p>
+        </div>
+        <div class="page-header-actions">
           <button class="btn btn-primary" disabled>
             开始随机练习
           </button>
         </div>
+      </div>
+
+      <div class="skeleton-grid" aria-hidden="true">
+        <div class="skeleton skeleton-card" v-for="item in 4" :key="item"></div>
       </div>
 
       <!-- Quiz Category Grid -->
@@ -91,28 +95,6 @@ const quizCategories = [
 </template>
 
 <style scoped>
-.page-header {
-  padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.header-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
-}
-
-.page-header h1 {
-  margin-bottom: 8px;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 560px;
-}
-
 /* --- Quiz Cards --- */
 .quiz-grid {
   gap: 20px;
@@ -162,6 +144,17 @@ const quizCategories = [
   margin-top: 4px;
 }
 
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.skeleton-card {
+  height: 120px;
+}
+
 /* --- Placeholder --- */
 .placeholder-notice {
   text-align: center;
@@ -176,8 +169,8 @@ const quizCategories = [
 
 /* --- Responsive --- */
 @media (max-width: 640px) {
-  .header-top {
-    flex-direction: column;
+  .skeleton-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

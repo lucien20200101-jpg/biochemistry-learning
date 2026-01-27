@@ -72,10 +72,19 @@ const pathways = [
     <div class="container">
       <!-- Header -->
       <div class="page-header">
-        <h1>八大核心代谢路径</h1>
-        <p class="page-subtitle">
-          系统学习生物化学中八大核心代谢路径，掌握关键反应步骤、酶、调控机制与临床关联。
-        </p>
+        <div>
+          <h1 class="page-header-title">八大核心代谢路径</h1>
+          <p class="page-header-subtitle">
+            系统学习生物化学中八大核心代谢路径，掌握关键反应步骤、酶、调控机制与临床关联。
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary">继续学习</button>
+        </div>
+      </div>
+
+      <div class="skeleton-grid" aria-hidden="true">
+        <div class="skeleton skeleton-card" v-for="item in 4" :key="item"></div>
       </div>
 
       <!-- Pathway Grid -->
@@ -105,21 +114,6 @@ const pathways = [
 </template>
 
 <style scoped>
-.page-header {
-  padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.page-header h1 {
-  margin-bottom: 8px;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 600px;
-}
-
 .pathway-grid {
   gap: 20px;
 }
@@ -180,5 +174,22 @@ const pathways = [
 
 .pathway-card:hover .pw-link .arrow {
   transform: translateX(3px);
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.skeleton-card {
+  height: 120px;
+}
+
+@media (max-width: 640px) {
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
