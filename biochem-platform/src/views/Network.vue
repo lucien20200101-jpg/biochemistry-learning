@@ -29,10 +29,16 @@ const connections = [
     <div class="container">
       <!-- Header -->
       <div class="page-header">
-        <h1>代谢网络总览</h1>
-        <p class="page-subtitle">
-          以全局视角理解代谢路径之间的连接关系。每个枢纽分子都在多条代谢途径之间起到桥梁作用。
-        </p>
+        <div>
+          <h1 class="page-header-title">代谢网络总览</h1>
+          <p class="page-header-subtitle">
+            以全局视角理解代谢路径之间的连接关系。每个枢纽分子都在多条代谢途径之间起到桥梁作用。
+          </p>
+        </div>
+        <div class="page-header-actions">
+          <button class="btn btn-primary">探索网络</button>
+          <button class="btn btn-outline">查看路径</button>
+        </div>
       </div>
 
       <!-- Network Visualization Placeholder -->
@@ -83,21 +89,6 @@ const connections = [
 </template>
 
 <style scoped>
-.page-header {
-  padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.page-header h1 {
-  margin-bottom: 8px;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 600px;
-}
-
 /* --- Network Canvas --- */
 .network-canvas {
   margin-bottom: 40px;

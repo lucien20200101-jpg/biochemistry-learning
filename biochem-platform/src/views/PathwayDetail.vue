@@ -89,11 +89,24 @@ function goBack() {
 
       <!-- Pathway Detail -->
       <template v-else>
+        <div class="page-header">
+          <div>
+            <h1 class="page-header-title">{{ pathway.name }}</h1>
+            <p class="page-header-subtitle">
+              聚焦核心反应、能量收支与调控机制，建立完整的路径理解框架。
+            </p>
+          </div>
+          <div class="page-header-actions">
+            <button class="btn btn-primary">开始章节练习</button>
+            <button class="btn btn-outline">加入学习计划</button>
+          </div>
+        </div>
+
         <!-- Header -->
         <div class="detail-header">
           <span class="detail-icon">{{ pathway.icon }}</span>
           <div>
-            <h1>{{ pathway.name }}</h1>
+            <h2>{{ pathway.name }}</h2>
             <p class="detail-english">{{ pathway.english }}</p>
           </div>
         </div>
@@ -160,7 +173,7 @@ function goBack() {
   line-height: 1;
 }
 
-.detail-header h1 {
+.detail-header h2 {
   margin-bottom: 2px;
 }
 
