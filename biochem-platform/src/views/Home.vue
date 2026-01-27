@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
-import HeroSection from '../components/HeroSection.vue'
+import LandingHero from '../components/LandingHero.vue'
 
 const router = useRouter()
 
@@ -34,8 +34,8 @@ const features = [
 
 <template>
   <div class="home">
-    <!-- Claymation Hero Section -->
-    <HeroSection />
+    <!-- Claymation / Earthy Landing Hero -->
+    <LandingHero />
 
     <!-- Features Section -->
     <section class="features section">
