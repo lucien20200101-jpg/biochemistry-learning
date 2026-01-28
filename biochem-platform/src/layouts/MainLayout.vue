@@ -46,8 +46,8 @@ const navLinks = [
     <!-- Footer -->
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p class="footer-text">BioChem Learning Platform</p>
-        <p class="footer-sub">Mastering metabolism, one pathway at a time</p>
+        <p class="footer-text">生化学习平台</p>
+        <p class="footer-sub">一步一步，掌握代谢全貌</p>
       </div>
     </footer>
   </div>

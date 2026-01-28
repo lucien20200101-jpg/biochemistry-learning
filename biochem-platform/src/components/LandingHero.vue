@@ -100,9 +100,9 @@ onMounted(() => {
 
         <!-- RIGHT / BOTTOM: Text content -->
         <div class="hero-content">
-          <h1 class="hero-title">Biochemistry Learning Center</h1>
+          <h1 class="hero-title">生化学习中心</h1>
           <p class="hero-subtitle">
-            Turn any topic into an animated claymation infographic.
+            将任意主题转化为生动的黏土动画信息图。
           </p>
 
           <!-- CTA Button -->
@@ -129,7 +129,7 @@ onMounted(() => {
               <path d="M5 15l.55 1.63L7 17.18l-1.45.37L5 19.18l-.55-1.63L3 17.18l1.45-.37L5 15z" />
               <path d="M19 11l.55 1.63L21 13.18l-1.45.37L19 15.18l-.55-1.63L17 13.18l1.45-.37L19 11z" />
             </svg>
-            <span>Start</span>
+            <span>开始</span>
           </router-link>
         </div>
       </div>

@@ -20,42 +20,42 @@ onMounted(() => {
 const features = [
   {
     icon: BookOpen,
-    title: 'Metabolic Pathways',
-    description: 'Study the eight core metabolic pathways with detailed explanations of key enzymes, reaction steps, and regulation mechanisms.',
-    action: 'Start learning',
+    title: '代谢路径',
+    description: '深入学习八大核心代谢路径，了解关键酶、反应步骤及调控机制。',
+    action: '开始学习',
     actionType: 'primary',
     to: '/pathways',
   },
   {
     icon: Network,
-    title: 'Network Overview',
-    description: 'Visualize how metabolic pathways interconnect through key hub molecules like Acetyl-CoA, NADH, and ATP.',
-    action: 'Explore network',
+    title: '代谢网络',
+    description: '通过乙酰CoA、NADH、ATP等关键枢纽分子，理解各代谢路径之间的相互联系。',
+    action: '探索网络',
     actionType: 'outline',
     to: '/network',
   },
   {
     icon: PenTool,
-    title: 'Practice Questions',
-    description: 'Test your understanding with curated questions covering concepts, energy calculations, and clinical correlations.',
-    action: 'Start practice',
+    title: '练习题库',
+    description: '精选练习题涵盖核心概念、能量计算与临床关联，检验学习成果。',
+    action: '开始练习',
     actionType: 'outline',
     to: '/quiz',
   },
   {
     icon: RotateCcw,
-    title: 'Review & Revise',
-    description: 'Track incorrect answers automatically and revisit them for targeted review to strengthen weak areas.',
-    action: 'View notebook',
+    title: '复习错题',
+    description: '自动追踪错题，针对性复习薄弱环节，巩固知识点。',
+    action: '查看错题本',
     actionType: 'outline',
     to: '/quiz',
   },
 ]
 
 const stats = [
-  { value: '8', label: 'Core Pathways' },
-  { value: '60+', label: 'Key Enzymes' },
-  { value: '100+', label: 'Questions' },
+  { value: '8', label: '核心路径' },
+  { value: '60+', label: '关键酶' },
+  { value: '100+', label: '练习题' },
 ]
 </script>
 
@@ -65,18 +65,18 @@ const stats = [
       <!-- Hero: Clean minimal header -->
       <div class="hero-section">
         <div class="hero-content">
-          <p class="hero-eyebrow">Biochemistry Learning Platform</p>
-          <h1 class="hero-title">Master metabolism,<br />one pathway at a time</h1>
+          <p class="hero-eyebrow">生化学习平台</p>
+          <h1 class="hero-title">一步一步，<br />掌握代谢全貌</h1>
           <p class="hero-desc">
-            A comprehensive study companion for biochemistry students. Learn the eight core metabolic pathways, understand their interconnections, and test your knowledge with practice questions.
+            专为生化学习者打造的系统学习工具。深入八大核心代谢路径，理解它们之间的相互联系，通过练习题检验学习成果。
           </p>
           <div class="hero-actions">
             <router-link to="/pathways" class="btn btn-primary btn-lg">
-              Start Learning
+              开始学习
               <ArrowRight :size="16" :stroke-width="2" />
             </router-link>
             <router-link to="/quiz" class="btn btn-outline btn-lg">
-              Practice Quiz
+              练习题库
             </router-link>
           </div>
         </div>
@@ -102,8 +102,8 @@ const stats = [
       <!-- Feature Entry Cards -->
       <section class="features-section">
         <div class="section-head">
-          <h2>Core Features</h2>
-          <p class="section-desc">Everything you need to master biochemistry metabolism.</p>
+          <h2>核心功能</h2>
+          <p class="section-desc">助你系统掌握生化代谢的全部内容。</p>
         </div>
         <div class="grid grid-2 features-grid">
           <div

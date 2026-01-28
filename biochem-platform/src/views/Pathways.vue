@@ -43,13 +43,13 @@ function getIcon(iconName) {
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <h1>Metabolic Pathways</h1>
+            <h1>代谢路径</h1>
             <p class="page-subtitle">
-              Master the eight core biochemical pathways. Understand key reactions, enzymes, regulation mechanisms, and clinical correlations.
+              掌握八大核心代谢路径，理解关键反应、酶、调控机制及临床关联。
             </p>
           </div>
           <router-link to="/quiz" class="btn btn-primary btn-sm header-cta">
-            Practice Quiz
+            练习题库
             <ArrowRight :size="14" :stroke-width="2" />
           </router-link>
         </div>
@@ -71,8 +71,8 @@ function getIcon(iconName) {
         <div class="empty-icon">
           <BookOpen :size="48" :stroke-width="1" />
         </div>
-        <h3>No pathways available</h3>
-        <p>Pathway data is being prepared. Please check back later.</p>
+        <h3>暂无路径数据</h3>
+        <p>路径数据正在准备中，请稍后再来查看。</p>
       </div>
 
       <!-- Pathway Grid -->
@@ -94,7 +94,7 @@ function getIcon(iconName) {
             <p class="pw-english">{{ pw.english }}</p>
             <p class="pw-summary">{{ pw.summary }}</p>
             <span class="pw-link">
-              View details
+              查看详情
               <ArrowRight :size="14" :stroke-width="2" class="arrow" />
             </span>
           </div>

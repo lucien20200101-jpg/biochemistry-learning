@@ -129,19 +129,19 @@ function optionClass(question, index) {
         <div class="page-header">
           <div class="page-header-row">
             <div>
-              <h1>Practice Quiz</h1>
+              <h1>练习题库</h1>
               <p class="page-subtitle">
-                Test your understanding of metabolic pathways with curated questions covering concepts, energy calculations, and clinical correlations.
+                精选练习题涵盖代谢路径的核心概念、能量计算与临床关联，检验你的学习成果。
               </p>
             </div>
             <div class="header-stats">
               <div class="header-stat">
                 <span class="header-stat-num">{{ store.filteredQuestions.length }}</span>
-                <span class="header-stat-label">Questions</span>
+                <span class="header-stat-label">题目</span>
               </div>
               <div class="header-stat">
                 <span class="header-stat-num wrong-color">{{ store.wrongQuestions.length }}</span>
-                <span class="header-stat-label">Incorrect</span>
+                <span class="header-stat-label">错题</span>
               </div>
             </div>
           </div>
@@ -155,7 +155,7 @@ function optionClass(question, index) {
             @click="activeTab = 'practice'"
           >
             <FileText :size="16" :stroke-width="2" />
-            Practice
+            练习
           </button>
           <button
             class="tab-btn"
@@ -163,7 +163,7 @@ function optionClass(question, index) {
             @click="activeTab = 'wrong'"
           >
             <Briefcase :size="16" :stroke-width="2" />
-            Review
+            错题本
             <span v-if="store.wrongQuestions.length > 0" class="tab-badge">
               {{ store.wrongQuestions.length }}
             </span>
@@ -176,18 +176,18 @@ function optionClass(question, index) {
           <div class="quick-actions">
             <button class="btn btn-primary btn-lg" @click="handleStartQuiz(10)">
               <CircleCheck :size="18" :stroke-width="2" />
-              Random 10 Questions
+              随机10题
             </button>
             <button class="btn btn-outline btn-lg" @click="handleStartQuiz(store.filteredQuestions.length)">
               <FileText :size="18" :stroke-width="2" />
-              All {{ store.filteredQuestions.length }} Questions
+              全部 {{ store.filteredQuestions.length }} 题
             </button>
           </div>
 
           <!-- Topic Selection -->
           <div class="section-heading">
-            <h2>Select by Topic</h2>
-            <p class="text-muted">Choose a specific topic for focused practice</p>
+            <h2>按主题选择</h2>
+            <p class="text-muted">选择特定主题进行针对性练习</p>
           </div>
 
           <div v-for="(chapterTopics, chapter) in topicsByChapter" :key="chapter" class="chapter-group">
@@ -206,7 +206,7 @@ function optionClass(question, index) {
                     <h3 class="topic-name">{{ topic.name }}</h3>
                     <span class="badge">{{ topic.count }} Q</span>
                   </div>
-                  <span class="btn btn-primary btn-sm">Start</span>
+                  <span class="btn btn-primary btn-sm">开始</span>
                 </div>
               </div>
             </div>
@@ -215,8 +215,8 @@ function optionClass(question, index) {
           <!-- Empty State -->
           <div v-if="store.filteredQuestions.length === 0" class="empty-state">
             <Flag :size="48" :stroke-width="1" />
-            <h3>No questions available</h3>
-            <p>Please check back later for updates.</p>
+            <h3>暂无题目</h3>
+            <p>请稍后再来查看更新。</p>
           </div>
         </template>
 
@@ -227,11 +227,11 @@ function optionClass(question, index) {
             <div class="wrong-actions">
               <button class="btn btn-primary" @click="handleStartWrongQuiz()">
                 <RefreshCw :size="16" :stroke-width="2" />
-                Review All ({{ store.wrongQuestions.length }})
+                复习全部 ({{ store.wrongQuestions.length }})
               </button>
               <button class="btn btn-outline" @click="store.clearWrongList()">
                 <Trash2 :size="16" :stroke-width="2" />
-                Clear All
+                清空全部
               </button>
             </div>
 
@@ -248,7 +248,7 @@ function optionClass(question, index) {
                   <button
                     class="btn btn-ghost btn-sm wrong-remove"
                     @click="store.removeWrongQuestion(q.id)"
-                    title="Remove"
+                    title="移除"
                   >
                     <X :size="16" :stroke-width="2" />
                   </button>
@@ -260,10 +260,10 @@ function optionClass(question, index) {
           <!-- Wrong Empty State -->
           <div v-else class="empty-state">
             <CircleCheck :size="48" :stroke-width="1" />
-            <h3>No incorrect answers</h3>
-            <p>Questions you answer incorrectly will appear here for review. Getting them right will remove them.</p>
+            <h3>暂无错题</h3>
+            <p>答错的题目会出现在这里供你复习。答对后会自动移除。</p>
             <button class="btn btn-primary" style="margin-top: 20px" @click="activeTab = 'practice'">
-              Start Practice
+              开始练习
             </button>
           </div>
         </template>
@@ -275,7 +275,7 @@ function optionClass(question, index) {
         <div class="quiz-header">
           <button class="btn btn-ghost btn-sm" @click="handleBackToLanding()">
             <ChevronLeft :size="14" :stroke-width="2" />
-            Back
+            返回
           </button>
           <div class="quiz-progress-info">
             <span class="timer-text">
@@ -286,7 +286,7 @@ function optionClass(question, index) {
               {{ store.currentIndex + 1 }} / {{ store.totalQuestions }}
             </span>
             <span v-if="store.allFinished" class="score-text">
-              Score: {{ store.correctCount }} / {{ store.totalQuestions }}
+              得分：{{ store.correctCount }} / {{ store.totalQuestions }}
             </span>
           </div>
         </div>
@@ -338,7 +338,7 @@ function optionClass(question, index) {
                   :disabled="store.userAnswers[store.currentQuestion.id] === undefined"
                   @click="store.submitAnswer(store.currentQuestion.id)"
                 >
-                  Submit Answer
+                  提交答案
                 </button>
 
                 <!-- Explanation after submit -->
@@ -350,11 +350,11 @@ function optionClass(question, index) {
                   <div class="explanation-header">
                     <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
                       <Check :size="14" :stroke-width="2.5" />
-                      Correct
+                      正确
                     </span>
                     <span v-else class="explanation-badge wrong">
                       <X :size="14" :stroke-width="2.5" />
-                      Incorrect — Answer: {{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? 'True' : 'False') : getOptionLabel(store.currentQuestion.answer) }}
+                      错误 — 正确答案：{{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? '正确' : '错误') : getOptionLabel(store.currentQuestion.answer) }}
                     </span>
                   </div>
                   <p class="explanation-text">{{ store.currentQuestion.explanation }}</p>
@@ -371,7 +371,7 @@ function optionClass(question, index) {
               @click="store.prevQuestion()"
             >
               <ChevronLeft :size="14" :stroke-width="2" />
-              Previous
+              上一题
             </button>
 
             <!-- Question dots -->
@@ -397,7 +397,7 @@ function optionClass(question, index) {
               class="btn btn-outline btn-sm"
               @click="store.nextQuestion()"
             >
-              Next
+              下一题
               <ChevronRight :size="14" :stroke-width="2" />
             </button>
             <button
@@ -405,7 +405,7 @@ function optionClass(question, index) {
               class="btn btn-primary btn-sm"
               @click="handleFinishQuiz()"
             >
-              Finish
+              完成
               <Check :size="14" :stroke-width="2" />
             </button>
           </div>
@@ -413,7 +413,7 @@ function optionClass(question, index) {
           <!-- Finish quiz early -->
           <div v-if="store.answeredCount > 0 && store.currentIndex < store.totalQuestions - 1" class="finish-early">
             <button class="btn btn-ghost btn-sm" @click="handleFinishQuiz()">
-              End early
+              提前结束
             </button>
           </div>
         </div>
@@ -431,42 +431,42 @@ function optionClass(question, index) {
                 <Frown v-else :size="40" :stroke-width="1.5" />
               </div>
 
-              <h2>Practice Complete</h2>
+              <h2>练习完成</h2>
               <p class="results-subtitle">
-                {{ store.accuracy >= 80 ? 'Excellent work! Keep it up.' : store.accuracy >= 50 ? 'Good effort. Keep practicing.' : 'Keep studying. You\'ll improve.' }}
+                {{ store.accuracy >= 80 ? '表现优秀，继续保持！' : store.accuracy >= 50 ? '不错的成绩，继续努力！' : '继续学习，你会进步的！' }}
               </p>
 
               <!-- Stats -->
               <div class="results-stats">
                 <div class="results-stat">
                   <div class="stat-num">{{ store.answeredCount }}</div>
-                  <div class="stat-lbl">Total</div>
+                  <div class="stat-lbl">总题数</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num correct-num">{{ store.correctCount }}</div>
-                  <div class="stat-lbl">Correct</div>
+                  <div class="stat-lbl">正确</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num wrong-num">{{ store.wrongCount }}</div>
-                  <div class="stat-lbl">Incorrect</div>
+                  <div class="stat-lbl">错误</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num accuracy-num">{{ store.accuracy }}%</div>
-                  <div class="stat-lbl">Accuracy</div>
+                  <div class="stat-lbl">正确率</div>
                 </div>
               </div>
 
               <!-- Time -->
               <div class="results-time">
                 <Clock :size="16" :stroke-width="2" />
-                Time: {{ formattedTime }}
+                用时：{{ formattedTime }}
               </div>
 
               <!-- CTAs -->
               <div class="results-actions">
                 <button class="btn btn-primary btn-lg" @click="handleRetry()">
                   <RefreshCw :size="18" :stroke-width="2" />
-                  Try Again
+                  再来一次
                 </button>
                 <button
                   v-if="store.wrongQuestions.length > 0"
@@ -474,7 +474,7 @@ function optionClass(question, index) {
                   @click="handleGoToWrong()"
                 >
                   <Briefcase :size="18" :stroke-width="2" />
-                  Review ({{ store.wrongQuestions.length }})
+                  查看错题 ({{ store.wrongQuestions.length }})
                 </button>
               </div>
             </div>

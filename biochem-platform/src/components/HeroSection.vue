@@ -43,7 +43,7 @@ onMounted(() => {
         class="clay-icon-btn group flex items-center gap-2 px-3 py-2 rounded-2xl bg-clay-card/60 border border-clay-warm/30 hover:bg-clay-card transition-all duration-300 hover:shadow-lg hover:shadow-clay-dark/30"
       >
         <RotateCcw :size="18" class="text-clay-gold group-hover:rotate-[-45deg] transition-transform duration-300" />
-        <span class="text-clay-sand text-sm font-semibold hidden sm:inline">Back</span>
+        <span class="text-clay-sand text-sm font-semibold hidden sm:inline">返回</span>
       </button>
 
       <!-- Center: Progress bar -->
@@ -64,7 +64,7 @@ onMounted(() => {
         class="clay-icon-btn group flex items-center gap-2 px-3 py-2 rounded-2xl bg-clay-card/60 border border-clay-warm/30 hover:bg-clay-card transition-all duration-300 hover:shadow-lg hover:shadow-clay-dark/30"
       >
         <Maximize :size="18" class="text-clay-gold group-hover:scale-110 transition-transform duration-300" />
-        <span class="text-clay-sand text-sm font-semibold hidden sm:inline">Fullscreen</span>
+        <span class="text-clay-sand text-sm font-semibold hidden sm:inline">全屏</span>
       </button>
     </nav>
 
@@ -133,7 +133,7 @@ onMounted(() => {
                   <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-4 sm:px-6 pb-3 pt-10">
                     <div class="flex items-center gap-2">
                       <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse shadow-sm shadow-green-400/50"></div>
-                      <span class="text-white/90 text-xs sm:text-sm font-semibold">Interactive Animation Ready</span>
+                      <span class="text-white/90 text-xs sm:text-sm font-semibold">交互式动画就绪</span>
                     </div>
                   </div>
 
@@ -141,7 +141,7 @@ onMounted(() => {
                   <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
                     <div class="bg-clay-dark/70 backdrop-blur-sm rounded-xl px-3 py-1.5 border border-clay-gold/30 flex items-center gap-1.5">
                       <FlaskConical :size="14" class="text-clay-gold" />
-                      <span class="text-clay-gold text-xs font-bold">Claymation</span>
+                      <span class="text-clay-gold text-xs font-bold">黏土动画</span>
                     </div>
                   </div>
                 </div>
@@ -156,7 +156,7 @@ onMounted(() => {
                   :style="{ transitionDelay: '400ms' }"
                 >
                   <span
-                    v-for="tag in ['Glycolysis', 'TCA Cycle', 'DNA Replication']"
+                    v-for="tag in ['糖酵解', 'TCA循环', 'DNA复制']"
                     :key="tag"
                     class="inline-flex items-center gap-1.5 px-3 py-1 bg-clay-card rounded-full border border-clay-warm/30 text-clay-sand text-xs font-semibold"
                   >
@@ -171,7 +171,7 @@ onMounted(() => {
                   :class="isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
                   :style="{ transitionDelay: '500ms' }"
                 >
-                  Biochemistry Learning Center
+                  生化学习中心
                 </h1>
 
                 <!-- Subtitle -->
@@ -180,8 +180,8 @@ onMounted(() => {
                   :class="isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
                   :style="{ transitionDelay: '600ms' }"
                 >
-                  Turn any topic into an animated claymation infographic.<br class="hidden sm:block" />
-                  Master metabolic pathways through interactive 3D visualizations.
+                  将任意主题转化为生动的黏土动画信息图。<br class="hidden sm:block" />
+                  通过交互式3D可视化，轻松掌握代谢路径。
                 </p>
 
                 <!-- CTA Buttons -->
@@ -202,7 +202,7 @@ onMounted(() => {
                       class="transition-transform duration-300"
                       :class="buttonHover ? 'rotate-12 scale-110' : ''"
                     />
-                    <span>Start Learning</span>
+                    <span>开始学习</span>
                     <ChevronRight
                       :size="16"
                       class="transition-transform duration-300"
@@ -218,7 +218,7 @@ onMounted(() => {
                     class="inline-flex items-center gap-2 px-6 py-3 bg-transparent text-clay-gold font-bold text-sm sm:text-base rounded-full border-2 border-clay-gold/40 hover:border-clay-gold/70 hover:bg-clay-gold/10 transition-all duration-300 hover:scale-105 active:scale-95"
                   >
                     <Dna :size="16" />
-                    <span>Explore Network</span>
+                    <span>探索网络</span>
                   </router-link>
                 </div>
 
@@ -229,9 +229,9 @@ onMounted(() => {
                   :style="{ transitionDelay: '800ms' }"
                 >
                   <div v-for="stat in [
-                    { value: '8', label: 'Pathways' },
-                    { value: '60+', label: 'Enzymes' },
-                    { value: '100+', label: 'Questions' },
+                    { value: '8', label: '代谢路径' },
+                    { value: '60+', label: '关键酶' },
+                    { value: '100+', label: '练习题' },
                   ]" :key="stat.label" class="text-center">
                     <div class="text-clay-gold text-lg sm:text-xl font-extrabold">{{ stat.value }}</div>
                     <div class="text-clay-sand/70 text-xs font-semibold">{{ stat.label }}</div>
