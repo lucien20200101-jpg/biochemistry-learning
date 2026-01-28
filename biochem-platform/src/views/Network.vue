@@ -1,26 +1,28 @@
 <script setup>
+import { ArrowRight, Network as NetworkIcon } from 'lucide-vue-next'
+
 const hubs = [
-  { name: 'Acetyl-CoA', desc: '脂肪酸氧化/合成、TCA循环的交汇点', color: 'primary' },
-  { name: 'NADH', desc: '氧化还原反应的关键电子载体', color: 'default' },
-  { name: 'FADH₂', desc: '复合物II的电子供体', color: 'default' },
-  { name: 'NADPH', desc: '还原性生物合成与抗氧化', color: 'default' },
-  { name: 'ATP', desc: '细胞的通用能量货币', color: 'primary' },
-  { name: 'Pyruvate', desc: '糖酵解终产物，连接多条代谢途径', color: 'default' },
-  { name: 'Citrate', desc: 'TCA循环首个中间产物，调控信号', color: 'default' },
-  { name: 'Oxaloacetate', desc: 'TCA循环与糖异生的连接点', color: 'default' },
-  { name: 'Glucose-6-P', desc: '糖酵解与磷酸戊糖途径的分支点', color: 'default' },
-  { name: 'Glutamate', desc: '氨基酸代谢与尿素循环的枢纽', color: 'default' },
-  { name: 'Fumarate', desc: 'TCA循环与尿素循环的交汇代谢物', color: 'default' },
-  { name: 'Malonyl-CoA', desc: '脂肪酸合成的直接前体', color: 'default' },
+  { name: 'Acetyl-CoA', desc: 'Junction point for fatty acid oxidation/synthesis and TCA cycle', primary: true },
+  { name: 'NADH', desc: 'Key electron carrier in redox reactions', primary: false },
+  { name: 'FADH₂', desc: 'Electron donor to Complex II', primary: false },
+  { name: 'NADPH', desc: 'Reductive biosynthesis and antioxidant defense', primary: false },
+  { name: 'ATP', desc: 'Universal energy currency of cells', primary: true },
+  { name: 'Pyruvate', desc: 'End product of glycolysis, connects multiple pathways', primary: false },
+  { name: 'Citrate', desc: 'First TCA cycle intermediate, regulatory signal', primary: false },
+  { name: 'Oxaloacetate', desc: 'Links TCA cycle and gluconeogenesis', primary: false },
+  { name: 'Glucose-6-P', desc: 'Branch point for glycolysis and PPP', primary: false },
+  { name: 'Glutamate', desc: 'Hub for amino acid metabolism and urea cycle', primary: false },
+  { name: 'Fumarate', desc: 'Shared metabolite of TCA and urea cycles', primary: false },
+  { name: 'Malonyl-CoA', desc: 'Direct precursor for fatty acid synthesis', primary: false },
 ]
 
 const connections = [
-  '糖酵解 → 丙酮酸 → 乙酰-CoA → TCA 循环',
-  'TCA 循环 → NADH / FADH₂ → 氧化磷酸化 → ATP',
-  '磷酸戊糖途径 ← 葡萄糖-6-磷酸 → 糖酵解',
-  '脂肪酸氧化 → 乙酰-CoA → TCA 循环',
-  '氨基酸分解 → TCA 中间产物 / 尿素循环',
-  '尿素循环 ↔ TCA 循环 (延胡索酸)',
+  'Glycolysis → Pyruvate → Acetyl-CoA → TCA Cycle',
+  'TCA Cycle → NADH / FADH₂ → Oxidative Phosphorylation → ATP',
+  'Pentose Phosphate Pathway ← Glucose-6-P → Glycolysis',
+  'Fatty Acid Oxidation → Acetyl-CoA → TCA Cycle',
+  'Amino Acid Catabolism → TCA Intermediates / Urea Cycle',
+  'Urea Cycle ↔ TCA Cycle (via Fumarate)',
 ]
 </script>
 
@@ -31,14 +33,14 @@ const connections = [
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <h1>代谢网络总览</h1>
+            <h1>Metabolic Network</h1>
             <p class="page-subtitle">
-              以全局视角理解代谢路径之间的连接关系。每个枢纽分子都在多条代谢途径之间起到桥梁作用。
+              Understand how metabolic pathways interconnect. Each hub molecule serves as a bridge between multiple metabolic routes.
             </p>
           </div>
           <router-link to="/pathways" class="btn btn-outline btn-sm header-cta">
-            查看路径详情
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            View Pathways
+            <ArrowRight :size="14" :stroke-width="2" />
           </router-link>
         </div>
       </div>
@@ -46,51 +48,31 @@ const connections = [
       <!-- Network Visualization Placeholder -->
       <div class="card network-canvas">
         <div class="canvas-placeholder">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="2"/>
-            <circle cx="5" cy="5" r="1.5"/>
-            <circle cx="19" cy="5" r="1.5"/>
-            <circle cx="5" cy="19" r="1.5"/>
-            <circle cx="19" cy="19" r="1.5"/>
-            <path d="M6.3 6.3 10.6 10.6"/>
-            <path d="M17.7 6.3 13.4 10.6"/>
-            <path d="M6.3 17.7 10.6 13.4"/>
-            <path d="M17.7 17.7 13.4 13.4"/>
-          </svg>
-          <h3>交互式代谢网络图</h3>
-          <p>此区域将在后续版本中集成可交互的代谢网络可视化。</p>
+          <NetworkIcon :size="48" :stroke-width="1" />
+          <h3>Interactive Network Visualization</h3>
+          <p>An interactive metabolic network diagram will be integrated in a future update.</p>
         </div>
       </div>
 
       <!-- Key Pathway Connections -->
       <div class="connections-section">
-        <h2>核心连接路径</h2>
+        <h2>Core Pathway Connections</h2>
         <div class="connections-list">
-          <div v-for="(conn, i) in connections" :key="i" class="connection-item card">
+          <div v-for="(conn, i) in connections" :key="i" class="card connection-item">
             <span class="conn-number">{{ i + 1 }}</span>
-            <span class="conn-text font-mono">{{ conn }}</span>
+            <span class="conn-text">{{ conn }}</span>
           </div>
         </div>
       </div>
 
       <!-- Hub Molecules -->
       <div class="hubs-section">
-        <h2>关键枢纽分子</h2>
-        <p class="section-desc">点击标签查看该分子在代谢网络中的角色（功能开发中）。</p>
-        <div class="hubs-grid">
-          <button
-            v-for="hub in hubs"
-            :key="hub.name"
-            :class="['badge', hub.color === 'primary' ? 'badge-primary' : '']"
-            :title="hub.desc"
-          >
-            {{ hub.name }}
-          </button>
-        </div>
-        <div class="hubs-details grid">
+        <h2>Key Hub Molecules</h2>
+        <p class="section-desc">These molecules serve as critical junctions in the metabolic network.</p>
+        <div class="hubs-details">
           <div v-for="hub in hubs" :key="hub.name" class="card hub-detail-item">
             <div class="card-body hub-body">
-              <span class="hub-name">{{ hub.name }}</span>
+              <span class="hub-name" :class="{ 'hub-primary': hub.primary }">{{ hub.name }}</span>
               <span class="hub-desc">{{ hub.desc }}</span>
             </div>
           </div>
@@ -108,7 +90,7 @@ const connections = [
 
 /* --- Network Canvas --- */
 .network-canvas {
-  margin-bottom: 48px;
+  margin-bottom: 64px;
 }
 
 .canvas-placeholder {
@@ -117,14 +99,15 @@ const connections = [
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 64px 24px;
+  padding: 80px 32px;
   min-height: 320px;
   background: var(--bg-secondary);
   border-radius: var(--radius-lg);
 }
 
 .canvas-placeholder svg {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  color: var(--muted-light);
 }
 
 .canvas-placeholder h3 {
@@ -139,24 +122,24 @@ const connections = [
 
 /* --- Connections --- */
 .connections-section {
-  margin-bottom: 48px;
+  margin-bottom: 64px;
 }
 
 .connections-section h2 {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .connections-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .connection-item {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: 16px;
+  padding: 18px 24px;
 }
 
 .conn-number {
@@ -174,8 +157,10 @@ const connections = [
 }
 
 .conn-text {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text);
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
 }
 
 /* --- Hubs --- */
@@ -184,52 +169,48 @@ const connections = [
 }
 
 .section-desc {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--muted);
-  margin-bottom: 20px;
-}
-
-.hubs-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 32px;
-}
-
-.hubs-grid .badge {
-  cursor: pointer;
-  font-size: 0.875rem;
-  padding: 6px 16px;
+  margin-bottom: 28px;
 }
 
 .hubs-details {
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 12px;
 }
 
 .hub-body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 16px 18px;
+  gap: 6px;
+  padding: 20px 24px;
 }
 
 .hub-name {
-  font-weight: 600;
-  font-size: 0.875rem;
+  font-weight: 500;
+  font-size: 0.9375rem;
   color: var(--text);
   font-family: var(--font-mono);
+}
+
+.hub-primary {
+  color: var(--text);
 }
 
 .hub-desc {
   font-size: 0.8125rem;
   color: var(--muted);
+  line-height: 1.6;
 }
 
 @media (max-width: 768px) {
   .page-header-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .hubs-details {
+    grid-template-columns: 1fr;
   }
 }
 </style>
