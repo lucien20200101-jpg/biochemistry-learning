@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, onUnmounted, watch } from 'vue'
 import { useQuizStore } from '../stores/quiz'
 import {
   FileText,
@@ -14,7 +14,20 @@ import {
   CircleCheck,
   Frown,
   Meh,
-  Flag
+  Flag,
+  Search,
+  SlidersHorizontal,
+  ArrowUpDown,
+  BookOpen,
+  Play,
+  CheckCircle2,
+  XCircle,
+  AlertTriangle,
+  Tag,
+  Calendar,
+  Hash,
+  Eye,
+  Sparkles
 } from 'lucide-vue-next'
 
 const store = useQuizStore()
@@ -23,6 +36,154 @@ const store = useQuizStore()
 const activeTab = ref('practice') // 'practice' | 'wrong'
 const timer = ref(0)
 let timerInterval = null
+
+// 错题本增强状态
+const searchQuery = ref('')
+const filterType = ref('all') // 'all' | 'single' | 'truefalse'
+const filterChapter = ref('all')
+const sortBy = ref('lastWrong') // 'lastWrong' | 'wrongCount' | 'firstWrong'
+const showMastered = ref(false)
+
+// Drawer 状态
+const drawerOpen = ref(false)
+const selectedWrongId = ref(null)
+
+// 获取选中的错题详情
+const selectedWrongRecord = computed(() => {
+  if (!selectedWrongId.value) return null
+  return store.getWrongRecord(selectedWrongId.value)
+})
+
+// 筛选和排序后的错题列表
+const filteredWrongQuestions = computed(() => {
+  let list = showMastered.value
+    ? store.allWrongRecords
+    : store.wrongQuestions
+
+  // 搜索过滤
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase()
+    list = list.filter(q =>
+      q.stem.toLowerCase().includes(query) ||
+      q.chapter.toLowerCase().includes(query) ||
+      q.topic.toLowerCase().includes(query) ||
+      q.knowledgePoints.some(kp => kp.toLowerCase().includes(query))
+    )
+  }
+
+  // 题型过滤
+  if (filterType.value !== 'all') {
+    list = list.filter(q => q.type === filterType.value)
+  }
+
+  // 章节过滤
+  if (filterChapter.value !== 'all') {
+    list = list.filter(q => q.chapter === filterChapter.value)
+  }
+
+  // 排序
+  list = [...list].sort((a, b) => {
+    switch (sortBy.value) {
+      case 'lastWrong':
+        return b.lastWrongAt - a.lastWrongAt
+      case 'wrongCount':
+        return b.wrongCount - a.wrongCount
+      case 'firstWrong':
+        return a.firstWrongAt - b.firstWrongAt
+      default:
+        return 0
+    }
+  })
+
+  return list
+})
+
+// 获取所有章节（用于筛选）
+const availableChapters = computed(() => {
+  const chapters = new Set()
+  store.allWrongRecords.forEach(q => {
+    if (q.chapter) chapters.add(q.chapter)
+  })
+  return Array.from(chapters)
+})
+
+// 格式化时间
+function formatTime(timestamp) {
+  if (!timestamp) return '未知'
+  const date = new Date(timestamp)
+  const now = new Date()
+  const diff = now - date
+
+  if (diff < 60000) return '刚刚'
+  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`
+  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`
+  if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`
+
+  return `${date.getMonth() + 1}月${date.getDate()}日`
+}
+
+// 获取掌握度标签
+function getMasteryLevel(record) {
+  if (record.status === 'mastered') return { label: '已掌握', class: 'mastery-mastered' }
+  if (record.wrongCount >= 5) return { label: '需加强', class: 'mastery-weak' }
+  if (record.wrongCount >= 3) return { label: '待巩固', class: 'mastery-medium' }
+  return { label: '初次错误', class: 'mastery-new' }
+}
+
+// 打开错题详情
+function openWrongDetail(id) {
+  selectedWrongId.value = id
+  drawerOpen.value = true
+}
+
+// 关闭抽屉
+function closeDrawer() {
+  drawerOpen.value = false
+  selectedWrongId.value = null
+}
+
+// 从详情中开始单题训练
+function startPracticeFromDetail() {
+  if (!selectedWrongId.value) return
+  closeDrawer()
+  store.startSingleWrongQuiz(selectedWrongId.value)
+  startTimer()
+}
+
+// 从详情中标记为已掌握
+function markMasteredFromDetail() {
+  if (!selectedWrongId.value) return
+  store.markAsMastered(selectedWrongId.value)
+  closeDrawer()
+}
+
+// 从详情中移除错题
+function removeFromDetail() {
+  if (!selectedWrongId.value) return
+  store.removeWrongQuestion(selectedWrongId.value)
+  closeDrawer()
+}
+
+// 获取题型显示文本
+function getTypeLabel(type) {
+  switch (type) {
+    case 'single': return '单选题'
+    case 'truefalse': return '判断题'
+    case 'multi': return '多选题'
+    default: return '题目'
+  }
+}
+
+// 获取正确答案显示文本
+function getAnswerText(record) {
+  if (!record) return ''
+  if (record.type === 'truefalse') {
+    return record.correctAnswer === 0 ? '正确' : '错误'
+  }
+  const label = String.fromCharCode(65 + record.correctAnswer)
+  const text = record.options[record.correctAnswer] || ''
+  return `${label}. ${text}`
+}
 
 function startTimer() {
   stopTimer()
@@ -222,37 +383,127 @@ function optionClass(question, index) {
 
         <!-- ===== Wrong Tab ===== -->
         <template v-if="activeTab === 'wrong'">
+          <!-- 错题本头部统计 -->
+          <div class="wrong-header-stats">
+            <div class="wrong-stat-item">
+              <span class="wrong-stat-num">{{ store.wrongStats.total }}</span>
+              <span class="wrong-stat-label">待复习</span>
+            </div>
+            <div class="wrong-stat-item">
+              <span class="wrong-stat-num mastered-num">{{ store.wrongStats.mastered }}</span>
+              <span class="wrong-stat-label">已掌握</span>
+            </div>
+          </div>
+
           <!-- Wrong Questions Exist -->
-          <template v-if="store.wrongQuestions.length > 0">
+          <template v-if="store.allWrongRecords.length > 0">
+            <!-- 操作按钮 -->
             <div class="wrong-actions">
-              <button class="btn btn-primary" @click="handleStartWrongQuiz()">
+              <button
+                class="btn btn-primary"
+                @click="handleStartWrongQuiz()"
+                :disabled="store.wrongQuestions.length === 0"
+              >
                 <RefreshCw :size="16" :stroke-width="2" />
                 复习全部 ({{ store.wrongQuestions.length }})
               </button>
               <button class="btn btn-outline" @click="store.clearWrongList()">
                 <Trash2 :size="16" :stroke-width="2" />
-                清空全部
+                清空待复习
               </button>
             </div>
 
-            <div class="wrong-list">
-              <div v-for="q in store.wrongQuestions" :key="q.id" class="card wrong-item">
-                <div class="card-body wrong-body">
-                  <div class="wrong-content">
-                    <div class="wrong-meta">
-                      <span class="badge">{{ q.chapter }}</span>
-                      <span class="badge">{{ q.topic }}</span>
+            <!-- 搜索和筛选 -->
+            <div class="wrong-filters">
+              <div class="search-box">
+                <Search :size="16" :stroke-width="2" class="search-icon" />
+                <input
+                  type="text"
+                  class="input search-input"
+                  placeholder="搜索题干、知识点..."
+                  v-model="searchQuery"
+                />
+              </div>
+
+              <div class="filter-group">
+                <select class="filter-select" v-model="filterType">
+                  <option value="all">全部题型</option>
+                  <option value="single">单选题</option>
+                  <option value="truefalse">判断题</option>
+                </select>
+
+                <select class="filter-select" v-model="filterChapter">
+                  <option value="all">全部章节</option>
+                  <option v-for="ch in availableChapters" :key="ch" :value="ch">{{ ch }}</option>
+                </select>
+
+                <select class="filter-select" v-model="sortBy">
+                  <option value="lastWrong">最近错误</option>
+                  <option value="wrongCount">错误次数</option>
+                  <option value="firstWrong">最早错误</option>
+                </select>
+
+                <label class="show-mastered-toggle">
+                  <input type="checkbox" v-model="showMastered" />
+                  <span>显示已掌握</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- 错题列表 -->
+            <div class="wrong-list-enhanced">
+              <div
+                v-for="record in filteredWrongQuestions"
+                :key="record.id"
+                class="card card-hover wrong-item-enhanced"
+                @click="openWrongDetail(record.id)"
+              >
+                <div class="card-body wrong-body-enhanced">
+                  <div class="wrong-main">
+                    <div class="wrong-meta-enhanced">
+                      <span class="badge type-badge">{{ getTypeLabel(record.type) }}</span>
+                      <span class="badge">{{ record.chapter }}</span>
+                      <span class="badge">{{ record.topic }}</span>
+                      <span class="mastery-badge" :class="getMasteryLevel(record).class">
+                        {{ getMasteryLevel(record).label }}
+                      </span>
                     </div>
-                    <p class="wrong-question">{{ q.question }}</p>
+                    <p class="wrong-stem">{{ record.stem }}</p>
+                    <div class="wrong-info-row">
+                      <span class="wrong-info-item">
+                        <Hash :size="12" :stroke-width="2" />
+                        错误 {{ record.wrongCount }} 次
+                      </span>
+                      <span class="wrong-info-item">
+                        <Calendar :size="12" :stroke-width="2" />
+                        {{ formatTime(record.lastWrongAt) }}
+                      </span>
+                      <span class="wrong-info-item kp-preview" v-if="record.knowledgePoints.length > 0">
+                        <Tag :size="12" :stroke-width="2" />
+                        {{ record.knowledgePoints.slice(0, 2).join('、') }}
+                        <span v-if="record.knowledgePoints.length > 2">...</span>
+                      </span>
+                    </div>
                   </div>
-                  <button
-                    class="btn btn-ghost btn-sm wrong-remove"
-                    @click="store.removeWrongQuestion(q.id)"
-                    title="移除"
-                  >
-                    <X :size="16" :stroke-width="2" />
-                  </button>
+                  <div class="wrong-actions-col">
+                    <button
+                      class="btn btn-ghost btn-sm"
+                      @click.stop="store.removeWrongQuestion(record.id)"
+                      title="移除"
+                    >
+                      <X :size="16" :stroke-width="2" />
+                    </button>
+                  </div>
                 </div>
+              </div>
+
+              <!-- 筛选无结果 -->
+              <div v-if="filteredWrongQuestions.length === 0" class="filter-empty">
+                <Search :size="32" :stroke-width="1.5" />
+                <p>没有找到匹配的错题</p>
+                <button class="btn btn-ghost btn-sm" @click="searchQuery = ''; filterType = 'all'; filterChapter = 'all'">
+                  清除筛选条件
+                </button>
               </div>
             </div>
           </template>
@@ -261,7 +512,7 @@ function optionClass(question, index) {
           <div v-else class="empty-state">
             <CircleCheck :size="48" :stroke-width="1" />
             <h3>暂无错题</h3>
-            <p>答错的题目会出现在这里供你复习。答对后会自动移除。</p>
+            <p>答错的题目会出现在这里供你复习。现在去练习吧！</p>
             <button class="btn btn-primary" style="margin-top: 20px" @click="activeTab = 'practice'">
               开始练习
             </button>
@@ -431,7 +682,7 @@ function optionClass(question, index) {
                 <Frown v-else :size="40" :stroke-width="1.5" />
               </div>
 
-              <h2>练习完成</h2>
+              <h2>{{ store.isWrongQuizMode ? '错题复习完成' : '练习完成' }}</h2>
               <p class="results-subtitle">
                 {{ store.accuracy >= 80 ? '表现优秀，继续保持！' : store.accuracy >= 50 ? '不错的成绩，继续努力！' : '继续学习，你会进步的！' }}
               </p>
@@ -455,6 +706,37 @@ function optionClass(question, index) {
                   <div class="stat-lbl">正确率</div>
                 </div>
               </div>
+
+              <!-- 错题训练增强统计 -->
+              <template v-if="store.isWrongQuizMode && store.wrongQuizStats">
+                <div class="wrong-quiz-stats">
+                  <div class="wrong-quiz-stat-row">
+                    <div class="wrong-quiz-stat">
+                      <CheckCircle2 :size="16" :stroke-width="2" class="stat-icon-correct" />
+                      <span>{{ store.wrongQuizStats.correct }} 题答对</span>
+                    </div>
+                    <div class="wrong-quiz-stat">
+                      <XCircle :size="16" :stroke-width="2" class="stat-icon-wrong" />
+                      <span>{{ store.wrongQuizStats.stillWrong }} 题仍需练习</span>
+                    </div>
+                  </div>
+
+                  <!-- 批量标记已掌握 -->
+                  <div v-if="store.wrongQuizStats.correctIds.length > 0" class="mastery-action-box">
+                    <div class="mastery-action-info">
+                      <Sparkles :size="16" :stroke-width="2" />
+                      <span>你答对了 {{ store.wrongQuizStats.correctIds.length }} 道错题，是否标记为已掌握？</span>
+                    </div>
+                    <button
+                      class="btn btn-outline btn-sm"
+                      @click="store.markMultipleAsMastered(store.wrongQuizStats.correctIds)"
+                    >
+                      <CheckCircle2 :size="14" :stroke-width="2" />
+                      全部标记为已掌握
+                    </button>
+                  </div>
+                </div>
+              </template>
 
               <!-- Time -->
               <div class="results-time">
@@ -483,6 +765,144 @@ function optionClass(question, index) {
       </template>
 
     </div>
+
+    <!-- ==================== DRAWER 错题详情 ==================== -->
+    <Teleport to="body">
+      <Transition name="drawer">
+        <div v-if="drawerOpen" class="drawer-overlay" @click="closeDrawer">
+          <div class="drawer-container" @click.stop>
+            <!-- Drawer Header -->
+            <div class="drawer-header">
+              <div class="drawer-title-row">
+                <span class="badge type-badge">{{ getTypeLabel(selectedWrongRecord?.type) }}</span>
+                <span class="badge">{{ selectedWrongRecord?.chapter }}</span>
+                <span class="badge">{{ selectedWrongRecord?.topic }}</span>
+              </div>
+              <button class="drawer-close" @click="closeDrawer">
+                <X :size="20" :stroke-width="2" />
+              </button>
+            </div>
+
+            <!-- Drawer Body -->
+            <div class="drawer-body" v-if="selectedWrongRecord">
+              <!-- 题目内容 -->
+              <div class="drawer-section">
+                <h4 class="drawer-section-title">
+                  <FileText :size="16" :stroke-width="2" />
+                  题目
+                </h4>
+                <p class="drawer-question-text">{{ selectedWrongRecord.stem }}</p>
+
+                <!-- 选项 -->
+                <div class="drawer-options">
+                  <div
+                    v-for="(opt, idx) in selectedWrongRecord.options"
+                    :key="idx"
+                    class="drawer-option"
+                    :class="{ 'drawer-option-correct': idx === selectedWrongRecord.correctAnswer }"
+                  >
+                    <span class="drawer-option-label">
+                      {{ selectedWrongRecord.type === 'truefalse' ? (idx === 0 ? 'T' : 'F') : String.fromCharCode(65 + idx) }}
+                    </span>
+                    <span class="drawer-option-text">{{ opt }}</span>
+                    <CheckCircle2
+                      v-if="idx === selectedWrongRecord.correctAnswer"
+                      :size="16"
+                      :stroke-width="2"
+                      class="correct-icon"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 正确答案 -->
+              <div class="drawer-section answer-section">
+                <h4 class="drawer-section-title">
+                  <Check :size="16" :stroke-width="2" />
+                  正确答案
+                </h4>
+                <div class="drawer-answer">
+                  {{ getAnswerText(selectedWrongRecord) }}
+                </div>
+              </div>
+
+              <!-- 解析 -->
+              <div class="drawer-section">
+                <h4 class="drawer-section-title">
+                  <BookOpen :size="16" :stroke-width="2" />
+                  解析
+                </h4>
+                <p class="drawer-explanation">{{ selectedWrongRecord.explanation }}</p>
+              </div>
+
+              <!-- 知识点 -->
+              <div class="drawer-section">
+                <h4 class="drawer-section-title">
+                  <Tag :size="16" :stroke-width="2" />
+                  相关知识点
+                </h4>
+                <div class="drawer-knowledge-points">
+                  <span
+                    v-for="kp in selectedWrongRecord.knowledgePoints"
+                    :key="kp"
+                    class="kp-badge"
+                  >
+                    {{ kp }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- 错题信息 -->
+              <div class="drawer-section drawer-meta-section">
+                <div class="drawer-meta-row">
+                  <span class="drawer-meta-item">
+                    <Hash :size="14" :stroke-width="2" />
+                    累计错误 {{ selectedWrongRecord.wrongCount }} 次
+                  </span>
+                  <span class="drawer-meta-item">
+                    <Calendar :size="14" :stroke-width="2" />
+                    最近错误：{{ formatTime(selectedWrongRecord.lastWrongAt) }}
+                  </span>
+                </div>
+                <div class="mastery-status">
+                  <span class="mastery-badge" :class="getMasteryLevel(selectedWrongRecord).class">
+                    {{ getMasteryLevel(selectedWrongRecord).label }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Drawer Footer -->
+            <div class="drawer-footer">
+              <button class="btn btn-primary" @click="startPracticeFromDetail">
+                <Play :size="16" :stroke-width="2" />
+                再练一次
+              </button>
+              <button
+                v-if="selectedWrongRecord?.status !== 'mastered'"
+                class="btn btn-outline"
+                @click="markMasteredFromDetail"
+              >
+                <CheckCircle2 :size="16" :stroke-width="2" />
+                标记已掌握
+              </button>
+              <button
+                v-else
+                class="btn btn-outline"
+                @click="store.unmarkMastered(selectedWrongId); closeDrawer()"
+              >
+                <RefreshCw :size="16" :stroke-width="2" />
+                取消已掌握
+              </button>
+              <button class="btn btn-ghost" @click="removeFromDetail">
+                <Trash2 :size="16" :stroke-width="2" />
+                移除
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -1186,5 +1606,539 @@ function optionClass(question, index) {
     padding: 12px 16px;
     font-size: 0.8125rem;
   }
+
+  .wrong-filters {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .filter-group {
+    flex-wrap: wrap;
+  }
+
+  .drawer-container {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .drawer-footer {
+    flex-wrap: wrap;
+  }
+}
+
+/* ==================== 错题本增强样式 ==================== */
+
+/* 错题本头部统计 */
+.wrong-header-stats {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 24px;
+}
+
+.wrong-stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wrong-stat-num {
+  font-size: 1.75rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.wrong-stat-num.mastered-num {
+  color: var(--success);
+}
+
+.wrong-stat-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* 搜索和筛选 */
+.wrong-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.search-box {
+  position: relative;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-light);
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 40px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  font-size: 0.8125rem;
+  font-family: var(--font-sans);
+  color: var(--text);
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--text);
+}
+
+.show-mastered-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.show-mastered-toggle input {
+  accent-color: var(--primary);
+}
+
+/* 增强版错题列表 */
+.wrong-list-enhanced {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wrong-item-enhanced {
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.wrong-item-enhanced:hover {
+  transform: translateY(-1px);
+}
+
+.wrong-body-enhanced {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.wrong-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.wrong-meta-enhanced {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.type-badge {
+  background-color: var(--primary-muted);
+  color: var(--text-secondary);
+}
+
+.mastery-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.mastery-new {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.mastery-medium {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.mastery-weak {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.mastery-mastered {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.wrong-stem {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.wrong-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.wrong-info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.kp-preview {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wrong-actions-col {
+  flex-shrink: 0;
+}
+
+.filter-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--muted);
+}
+
+.filter-empty svg {
+  margin: 0 auto 12px;
+  opacity: 0.5;
+}
+
+.filter-empty p {
+  margin-bottom: 16px;
+}
+
+/* ==================== Drawer 样式 ==================== */
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawer-container {
+  width: 100%;
+  max-width: 520px;
+  height: 100%;
+  background-color: var(--card);
+  box-shadow: var(--shadow-xl);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.drawer-title-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.drawer-close:hover {
+  background-color: var(--bg-secondary);
+  color: var(--text);
+}
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.drawer-section {
+  margin-bottom: 28px;
+}
+
+.drawer-section:last-child {
+  margin-bottom: 0;
+}
+
+.drawer-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.drawer-question-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.drawer-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 16px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.drawer-option-correct {
+  background-color: #f0fdf4;
+  border: 1px solid #86efac;
+}
+
+.drawer-option-label {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.drawer-option-correct .drawer-option-label {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.drawer-option-text {
+  flex: 1;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.drawer-option-correct .drawer-option-text {
+  color: var(--text);
+}
+
+.correct-icon {
+  flex-shrink: 0;
+  color: var(--success);
+}
+
+.answer-section {
+  background-color: #f0fdf4;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid #bbf7d0;
+}
+
+.answer-section .drawer-section-title {
+  color: #166534;
+}
+
+.drawer-answer {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #166534;
+  line-height: 1.6;
+}
+
+.drawer-explanation {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.drawer-knowledge-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.kp-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.drawer-meta-section {
+  background-color: var(--bg-secondary);
+  padding: 16px;
+  border-radius: var(--radius);
+}
+
+.drawer-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.drawer-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.mastery-status {
+  display: flex;
+  align-items: center;
+}
+
+.drawer-footer {
+  display: flex;
+  gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* Drawer 过渡动画 */
+.drawer-enter-active,
+.drawer-leave-active {
+  transition: opacity var(--transition-base);
+}
+
+.drawer-enter-active .drawer-container,
+.drawer-leave-active .drawer-container {
+  transition: transform var(--transition-base);
+}
+
+.drawer-enter-from,
+.drawer-leave-to {
+  opacity: 0;
+}
+
+.drawer-enter-from .drawer-container,
+.drawer-leave-to .drawer-container {
+  transform: translateX(100%);
+}
+
+/* ==================== 错题训练结果增强 ==================== */
+
+.wrong-quiz-stats {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.wrong-quiz-stat-row {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 16px;
+}
+
+.wrong-quiz-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.stat-icon-correct {
+  color: var(--success);
+}
+
+.stat-icon-wrong {
+  color: var(--destructive);
+}
+
+.mastery-action-box {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.mastery-action-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.mastery-action-info svg {
+  color: var(--warning);
 }
 </style>
