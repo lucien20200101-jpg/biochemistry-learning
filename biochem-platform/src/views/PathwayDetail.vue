@@ -16,16 +16,19 @@ function goBack() {
 </script>
 
 <template>
-  <div class="detail-page">
+  <div class="detail-page fade-in">
     <div class="container">
       <!-- Back button -->
       <button class="btn btn-ghost back-btn" @click="goBack">
-        &larr; 返回代谢路径列表
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        返回代谢路径列表
       </button>
 
       <!-- Not found -->
       <div v-if="!pathway" class="not-found">
-        <div class="empty-icon">🔍</div>
+        <div class="empty-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </div>
         <h2>未找到该代谢路径</h2>
         <p>请检查路径 ID 是否正确，或返回列表重新选择。</p>
         <button class="btn btn-outline" style="margin-top: 16px" @click="goBack">
@@ -46,9 +49,15 @@ function goBack() {
 
         <!-- Meta badges -->
         <div class="detail-meta">
-          <span class="badge">📍 {{ pathway.location }}</span>
-          <span class="badge badge-primary">⚡ {{ pathway.energy }}</span>
-          <span class="badge">📂 {{ pathway.chapter }}</span>
+          <span class="badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ pathway.location }}
+          </span>
+          <span class="badge badge-primary">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            {{ pathway.energy }}
+          </span>
+          <span class="badge">{{ pathway.chapter }}</span>
         </div>
 
         <!-- Sections -->
@@ -57,7 +66,7 @@ function goBack() {
           <div class="card section-card">
             <div class="card-body">
               <div class="section-header">
-                <span class="section-icon">📋</span>
+                <span class="section-dot"></span>
                 <h3>概览</h3>
               </div>
               <div class="section-content">
@@ -70,7 +79,7 @@ function goBack() {
           <div class="card section-card">
             <div class="card-body">
               <div class="section-header">
-                <span class="section-icon">🔢</span>
+                <span class="section-dot"></span>
                 <h3>关键步骤</h3>
               </div>
               <div class="section-content">
@@ -92,7 +101,7 @@ function goBack() {
           <div class="card section-card">
             <div class="card-body">
               <div class="section-header">
-                <span class="section-icon">⚡</span>
+                <span class="section-dot section-dot-accent"></span>
                 <h3>能量计算</h3>
               </div>
               <div class="section-content">
@@ -105,7 +114,7 @@ function goBack() {
           <div class="card section-card">
             <div class="card-body">
               <div class="section-header">
-                <span class="section-icon">🎛️</span>
+                <span class="section-dot"></span>
                 <h3>调控机制</h3>
               </div>
               <div class="section-content">
@@ -121,7 +130,7 @@ function goBack() {
           <div class="card section-card">
             <div class="card-body">
               <div class="section-header">
-                <span class="section-icon">🏥</span>
+                <span class="section-dot section-dot-danger"></span>
                 <h3>临床关联</h3>
               </div>
               <div class="section-content">
@@ -141,17 +150,16 @@ function goBack() {
 <style scoped>
 .back-btn {
   margin-bottom: 24px;
-  margin-top: 8px;
+  margin-top: 0;
 }
 
-/* --- Not Found (Empty State) --- */
+/* --- Not Found --- */
 .not-found {
   text-align: center;
   padding: 80px 24px;
 }
 
 .not-found .empty-icon {
-  font-size: 3rem;
   margin-bottom: 16px;
   opacity: 0.7;
 }
@@ -202,18 +210,30 @@ function goBack() {
 }
 
 .section-card .card-body {
-  padding: 24px;
+  padding: 28px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-.section-icon {
-  font-size: 1.25rem;
+.section-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text);
+  flex-shrink: 0;
+}
+
+.section-dot-accent {
+  background: var(--primary);
+}
+
+.section-dot-danger {
+  background: var(--destructive);
 }
 
 .section-header h3 {
@@ -273,7 +293,7 @@ function goBack() {
 
 .step-detail {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--muted);
   line-height: 1.7;
 }
 
@@ -313,6 +333,10 @@ function goBack() {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .section-card .card-body {
+    padding: 20px;
   }
 }
 </style>

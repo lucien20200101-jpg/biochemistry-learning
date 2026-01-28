@@ -26,7 +26,6 @@ function optionClass(question, index) {
   if (!isSubmitted) {
     return isSelected ? 'option-selected' : ''
   }
-  // After submission
   if (index === question.answer) return 'option-correct'
   if (isSelected && index !== question.answer) return 'option-wrong'
   return 'option-disabled'
@@ -34,13 +33,13 @@ function optionClass(question, index) {
 </script>
 
 <template>
-  <div class="quiz-page">
+  <div class="quiz-page fade-in">
     <div class="container">
 
       <!-- ========== Landing: chapter select + start ========== -->
       <template v-if="!store.isQuizActive">
         <div class="page-header">
-          <div class="header-top">
+          <div class="page-header-row">
             <div>
               <h1>练习题库</h1>
               <p class="page-subtitle">
@@ -72,7 +71,9 @@ function optionClass(question, index) {
         <div class="start-actions">
           <div class="card card-hover start-card" @click="handleStart(5)">
             <div class="card-body start-body">
-              <div class="start-icon">🎯</div>
+              <div class="start-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
               <h3>随机 5 题</h3>
               <p>{{ store.filteredQuestions.length }} 题可用</p>
               <span class="btn btn-primary btn-sm">开始练习</span>
@@ -81,7 +82,9 @@ function optionClass(question, index) {
 
           <div class="card card-hover start-card" @click="handleStart(store.filteredQuestions.length)">
             <div class="card-body start-body">
-              <div class="start-icon">📋</div>
+              <div class="start-icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+              </div>
               <h3>全部练习</h3>
               <p>{{ store.filteredQuestions.length }} 题</p>
               <span class="btn btn-outline btn-sm">开始练习</span>
@@ -94,7 +97,9 @@ function optionClass(question, index) {
             @click="store.wrongQuestions.length > 0 && handleStartWrong()"
           >
             <div class="card-body start-body">
-              <div class="start-icon">🔴</div>
+              <div class="start-icon-wrap start-icon-danger">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+              </div>
               <h3>错题回顾</h3>
               <p v-if="store.wrongQuestions.length > 0">{{ store.wrongQuestions.length }} 道错题</p>
               <p v-else class="text-muted">暂无错题记录</p>
@@ -111,7 +116,7 @@ function optionClass(question, index) {
 
         <!-- Empty State for no questions -->
         <div v-if="store.filteredQuestions.length === 0" class="empty-state">
-          <div class="empty-icon">📭</div>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
           <h3>该章节暂无题目</h3>
           <p>请选择其他章节或等待题库更新。</p>
         </div>
@@ -122,7 +127,8 @@ function optionClass(question, index) {
         <!-- Quiz Header -->
         <div class="quiz-header">
           <button class="btn btn-ghost btn-sm" @click="store.resetQuiz()">
-            &larr; 返回题库
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            返回题库
           </button>
           <div class="quiz-progress-info">
             <span class="progress-text">
@@ -194,9 +200,11 @@ function optionClass(question, index) {
                 >
                   <div class="explanation-header">
                     <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
                       回答正确
                     </span>
                     <span v-else class="explanation-badge wrong">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                       回答错误 — 正确答案：{{ getOptionLabel(store.currentQuestion.answer) }}
                     </span>
                   </div>
@@ -213,7 +221,8 @@ function optionClass(question, index) {
               :disabled="store.currentIndex === 0"
               @click="store.prevQuestion()"
             >
-              &larr; 上一题
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              上一题
             </button>
 
             <!-- Question dots -->
@@ -239,7 +248,8 @@ function optionClass(question, index) {
               :disabled="store.currentIndex === store.totalQuestions - 1"
               @click="store.nextQuestion()"
             >
-              下一题 &rarr;
+              下一题
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
           </div>
 
@@ -283,15 +293,8 @@ function optionClass(question, index) {
 <style scoped>
 /* --- Page Header --- */
 .page-header {
-  padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.header-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 24px;
+  padding-top: 8px;
+  padding-bottom: 40px;
 }
 
 .page-header h1 {
@@ -300,7 +303,7 @@ function optionClass(question, index) {
 
 .page-subtitle {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: var(--muted);
   max-width: 560px;
 }
 
@@ -337,9 +340,9 @@ function optionClass(question, index) {
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
   background: var(--card);
-  color: var(--text-secondary);
+  color: var(--muted);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   font-family: var(--font-sans);
 }
 
@@ -385,8 +388,20 @@ function optionClass(question, index) {
   padding: 32px 24px;
 }
 
-.start-icon {
-  font-size: 2rem;
+.start-icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  color: var(--text);
+}
+
+.start-icon-danger {
+  background: var(--destructive-light);
+  color: var(--destructive);
 }
 
 .start-body h3 {
@@ -409,10 +424,8 @@ function optionClass(question, index) {
   padding: 60px 24px;
 }
 
-.empty-icon {
-  font-size: 3rem;
+.empty-state svg {
   margin-bottom: 16px;
-  opacity: 0.7;
 }
 
 .empty-state h3 {
@@ -431,7 +444,7 @@ function optionClass(question, index) {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
-  padding-top: 8px;
+  padding-top: 0;
 }
 
 .quiz-progress-info {
@@ -443,7 +456,7 @@ function optionClass(question, index) {
 .progress-text {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--muted);
 }
 
 .score-text {
@@ -466,7 +479,7 @@ function optionClass(question, index) {
   height: 100%;
   background: var(--primary);
   border-radius: 2px;
-  transition: width 0.3s ease;
+  transition: width var(--transition-slow);
 }
 
 /* --- Question Card --- */
@@ -506,7 +519,7 @@ function optionClass(question, index) {
   border-radius: var(--radius-sm);
   background: var(--card);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   text-align: left;
   font-family: var(--font-sans);
   font-size: 0.9375rem;
@@ -530,7 +543,7 @@ function optionClass(question, index) {
   justify-content: center;
   font-weight: 700;
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--muted);
   margin-top: 1px;
 }
 
@@ -583,7 +596,7 @@ function optionClass(question, index) {
 
 /* --- Explanation --- */
 .explanation-box {
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   padding: 20px;
 }
 
@@ -602,6 +615,9 @@ function optionClass(question, index) {
 }
 
 .explanation-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
   padding: 4px 12px;
@@ -648,9 +664,9 @@ function optionClass(question, index) {
   background: var(--card);
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--muted);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -694,7 +710,7 @@ function optionClass(question, index) {
 
 .summary-body {
   text-align: center;
-  padding: 32px;
+  padding: 40px 32px;
 }
 
 .summary-body h3 {
@@ -706,7 +722,7 @@ function optionClass(question, index) {
   display: flex;
   justify-content: center;
   gap: 48px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .stat-num {
@@ -738,7 +754,7 @@ function optionClass(question, index) {
 
 /* --- Responsive --- */
 @media (max-width: 640px) {
-  .header-top {
+  .page-header-row {
     flex-direction: column;
   }
 
