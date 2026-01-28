@@ -25,24 +25,40 @@ const connections = [
 </script>
 
 <template>
-  <div class="network-page">
+  <div class="network-page fade-in">
     <div class="container">
       <!-- Header -->
       <div class="page-header">
-        <h1>代谢网络总览</h1>
-        <p class="page-subtitle">
-          以全局视角理解代谢路径之间的连接关系。每个枢纽分子都在多条代谢途径之间起到桥梁作用。
-        </p>
+        <div class="page-header-row">
+          <div>
+            <h1>代谢网络总览</h1>
+            <p class="page-subtitle">
+              以全局视角理解代谢路径之间的连接关系。每个枢纽分子都在多条代谢途径之间起到桥梁作用。
+            </p>
+          </div>
+          <router-link to="/pathways" class="btn btn-outline btn-sm header-cta">
+            查看路径详情
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </router-link>
+        </div>
       </div>
 
       <!-- Network Visualization Placeholder -->
       <div class="card network-canvas">
-        <div class="card-body">
-          <div class="canvas-placeholder">
-            <span class="canvas-icon">🕸️</span>
-            <h3>交互式代谢网络图</h3>
-            <p>此区域将在后续版本中集成可交互的代谢网络可视化。</p>
-          </div>
+        <div class="canvas-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="2"/>
+            <circle cx="5" cy="5" r="1.5"/>
+            <circle cx="19" cy="5" r="1.5"/>
+            <circle cx="5" cy="19" r="1.5"/>
+            <circle cx="19" cy="19" r="1.5"/>
+            <path d="M6.3 6.3 10.6 10.6"/>
+            <path d="M17.7 6.3 13.4 10.6"/>
+            <path d="M6.3 17.7 10.6 13.4"/>
+            <path d="M17.7 17.7 13.4 13.4"/>
+          </svg>
+          <h3>交互式代谢网络图</h3>
+          <p>此区域将在后续版本中集成可交互的代谢网络可视化。</p>
         </div>
       </div>
 
@@ -50,7 +66,7 @@ const connections = [
       <div class="connections-section">
         <h2>核心连接路径</h2>
         <div class="connections-list">
-          <div v-for="(conn, i) in connections" :key="i" class="connection-item">
+          <div v-for="(conn, i) in connections" :key="i" class="connection-item card">
             <span class="conn-number">{{ i + 1 }}</span>
             <span class="conn-text font-mono">{{ conn }}</span>
           </div>
@@ -71,10 +87,12 @@ const connections = [
             {{ hub.name }}
           </button>
         </div>
-        <div class="hubs-details">
-          <div v-for="hub in hubs" :key="hub.name" class="hub-detail-item">
-            <span class="hub-name">{{ hub.name }}</span>
-            <span class="hub-desc">{{ hub.desc }}</span>
+        <div class="hubs-details grid">
+          <div v-for="hub in hubs" :key="hub.name" class="card hub-detail-item">
+            <div class="card-body hub-body">
+              <span class="hub-name">{{ hub.name }}</span>
+              <span class="hub-desc">{{ hub.desc }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -83,28 +101,14 @@ const connections = [
 </template>
 
 <style scoped>
-.page-header {
-  padding-top: 16px;
-  padding-bottom: 32px;
-}
-
-.page-header h1 {
-  margin-bottom: 8px;
-}
-
-.page-subtitle {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  max-width: 600px;
+.header-cta {
+  flex-shrink: 0;
+  margin-top: 4px;
 }
 
 /* --- Network Canvas --- */
 .network-canvas {
-  margin-bottom: 40px;
-}
-
-.network-canvas .card-body {
-  padding: 0;
+  margin-bottom: 48px;
 }
 
 .canvas-placeholder {
@@ -116,11 +120,10 @@ const connections = [
   padding: 64px 24px;
   min-height: 320px;
   background: var(--bg-secondary);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
 }
 
-.canvas-icon {
-  font-size: 3rem;
+.canvas-placeholder svg {
   margin-bottom: 16px;
 }
 
@@ -136,11 +139,11 @@ const connections = [
 
 /* --- Connections --- */
 .connections-section {
-  margin-bottom: 40px;
+  margin-bottom: 48px;
 }
 
 .connections-section h2 {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .connections-list {
@@ -152,11 +155,8 @@ const connections = [
 .connection-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  gap: 14px;
+  padding: 14px 18px;
 }
 
 .conn-number {
@@ -167,7 +167,7 @@ const connections = [
   height: 28px;
   border-radius: var(--radius-full);
   background: var(--bg-secondary);
-  color: var(--text-secondary);
+  color: var(--muted);
   font-size: 0.8125rem;
   font-weight: 600;
   flex-shrink: 0;
@@ -203,19 +203,15 @@ const connections = [
 }
 
 .hubs-details {
-  display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 12px;
 }
 
-.hub-detail-item {
+.hub-body {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 14px 16px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  gap: 4px;
+  padding: 16px 18px;
 }
 
 .hub-name {
@@ -227,6 +223,13 @@ const connections = [
 
 .hub-desc {
   font-size: 0.8125rem;
-  color: var(--text-secondary);
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .page-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 </style>

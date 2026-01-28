@@ -1,15 +1,5 @@
 @import "tailwindcss";
 
 @theme {
-  --color-clay-bg: #3F2E12;
-  --color-clay-card: #5C462B;
-  --color-clay-gold: #F5C368;
-  --color-clay-sand: #C4B598;
-  --color-clay-cream: #E6D6B9;
-  --color-clay-dark: #2A1E0B;
-  --color-clay-warm: #7A5E3A;
-  --color-clay-highlight: #F9D98A;
-  --color-clay-deep: #4A3620;
-
-  --font-clay: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
