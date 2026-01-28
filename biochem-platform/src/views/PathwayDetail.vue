@@ -50,7 +50,7 @@ function goBack() {
       <!-- Back button -->
       <button class="btn btn-ghost back-btn" @click="goBack">
         <ChevronLeft :size="16" :stroke-width="2" />
-        Back to pathways
+        返回路径列表
       </button>
 
       <!-- Not found -->
@@ -58,10 +58,10 @@ function goBack() {
         <div class="empty-icon">
           <Search :size="48" :stroke-width="1" />
         </div>
-        <h2>Pathway not found</h2>
-        <p>Please check the pathway ID or return to the list.</p>
+        <h2>未找到该路径</h2>
+        <p>请检查路径 ID，或返回列表页。</p>
         <button class="btn btn-outline" style="margin-top: 20px" @click="goBack">
-          Return to pathways
+          返回路径列表
         </button>
       </div>
 
@@ -98,7 +98,7 @@ function goBack() {
             <div class="card-body">
               <div class="section-header">
                 <span class="section-dot"></span>
-                <h3>Overview</h3>
+                <h3>概述</h3>
               </div>
               <div class="section-content">
                 <p>{{ pathway.overview }}</p>
@@ -111,7 +111,7 @@ function goBack() {
             <div class="card-body">
               <div class="section-header">
                 <span class="section-dot"></span>
-                <h3>Key Steps</h3>
+                <h3>关键步骤</h3>
               </div>
               <div class="section-content">
                 <div v-if="pathway.steps && pathway.steps.length" class="steps-list">
@@ -123,7 +123,7 @@ function goBack() {
                     </div>
                   </div>
                 </div>
-                <p v-else class="placeholder-text">Key step data is being prepared.</p>
+                <p v-else class="placeholder-text">关键步骤数据正在准备中。</p>
               </div>
             </div>
           </div>
@@ -133,7 +133,7 @@ function goBack() {
             <div class="card-body">
               <div class="section-header">
                 <span class="section-dot section-dot-accent"></span>
-                <h3>Energy Balance</h3>
+                <h3>能量收支</h3>
               </div>
               <div class="section-content">
                 <p class="energy-highlight">{{ pathway.energy }}</p>
@@ -146,13 +146,13 @@ function goBack() {
             <div class="card-body">
               <div class="section-header">
                 <span class="section-dot"></span>
-                <h3>Regulation</h3>
+                <h3>调控机制</h3>
               </div>
               <div class="section-content">
                 <ul v-if="pathway.regulation && pathway.regulation.length" class="info-list">
                   <li v-for="(item, i) in pathway.regulation" :key="i">{{ item }}</li>
                 </ul>
-                <p v-else class="placeholder-text">Regulation data is being prepared.</p>
+                <p v-else class="placeholder-text">调控机制数据正在准备中。</p>
               </div>
             </div>
           </div>
@@ -162,13 +162,13 @@ function goBack() {
             <div class="card-body">
               <div class="section-header">
                 <span class="section-dot section-dot-danger"></span>
-                <h3>Clinical Relevance</h3>
+                <h3>临床关联</h3>
               </div>
               <div class="section-content">
                 <ul v-if="pathway.clinical && pathway.clinical.length" class="info-list clinical-list">
                   <li v-for="(item, i) in pathway.clinical" :key="i">{{ item }}</li>
                 </ul>
-                <p v-else class="placeholder-text">Clinical data is being prepared.</p>
+                <p v-else class="placeholder-text">临床关联数据正在准备中。</p>
               </div>
             </div>
           </div>

@@ -2,27 +2,27 @@
 import { ArrowRight, Network as NetworkIcon } from 'lucide-vue-next'
 
 const hubs = [
-  { name: 'Acetyl-CoA', desc: 'Junction point for fatty acid oxidation/synthesis and TCA cycle', primary: true },
-  { name: 'NADH', desc: 'Key electron carrier in redox reactions', primary: false },
-  { name: 'FADH₂', desc: 'Electron donor to Complex II', primary: false },
-  { name: 'NADPH', desc: 'Reductive biosynthesis and antioxidant defense', primary: false },
-  { name: 'ATP', desc: 'Universal energy currency of cells', primary: true },
-  { name: 'Pyruvate', desc: 'End product of glycolysis, connects multiple pathways', primary: false },
-  { name: 'Citrate', desc: 'First TCA cycle intermediate, regulatory signal', primary: false },
-  { name: 'Oxaloacetate', desc: 'Links TCA cycle and gluconeogenesis', primary: false },
-  { name: 'Glucose-6-P', desc: 'Branch point for glycolysis and PPP', primary: false },
-  { name: 'Glutamate', desc: 'Hub for amino acid metabolism and urea cycle', primary: false },
-  { name: 'Fumarate', desc: 'Shared metabolite of TCA and urea cycles', primary: false },
-  { name: 'Malonyl-CoA', desc: 'Direct precursor for fatty acid synthesis', primary: false },
+  { name: '乙酰CoA', desc: '脂肪酸氧化/合成与TCA循环的交汇点', primary: true },
+  { name: 'NADH', desc: '氧化还原反应中的关键电子载体', primary: false },
+  { name: 'FADH₂', desc: '向复合物II传递电子', primary: false },
+  { name: 'NADPH', desc: '还原性生物合成与抗氧化防御', primary: false },
+  { name: 'ATP', desc: '细胞的通用能量货币', primary: true },
+  { name: '丙酮酸', desc: '糖酵解的终产物，连接多条路径', primary: false },
+  { name: '柠檬酸', desc: 'TCA循环第一个中间产物，调节信号', primary: false },
+  { name: '草酰乙酸', desc: '连接TCA循环与糖异生', primary: false },
+  { name: '葡萄糖-6-磷酸', desc: '糖酵解与磷酸戊糖途径的分支点', primary: false },
+  { name: '谷氨酸', desc: '氨基酸代谢与尿素循环的枢纽', primary: false },
+  { name: '延胡索酸', desc: 'TCA循环与尿素循环的共有代谢物', primary: false },
+  { name: '丙二酰CoA', desc: '脂肪酸合成的直接前体', primary: false },
 ]
 
 const connections = [
-  'Glycolysis → Pyruvate → Acetyl-CoA → TCA Cycle',
-  'TCA Cycle → NADH / FADH₂ → Oxidative Phosphorylation → ATP',
-  'Pentose Phosphate Pathway ← Glucose-6-P → Glycolysis',
-  'Fatty Acid Oxidation → Acetyl-CoA → TCA Cycle',
-  'Amino Acid Catabolism → TCA Intermediates / Urea Cycle',
-  'Urea Cycle ↔ TCA Cycle (via Fumarate)',
+  '糖酵解 → 丙酮酸 → 乙酰CoA → TCA循环',
+  'TCA循环 → NADH / FADH₂ → 氧化磷酸化 → ATP',
+  '磷酸戊糖途径 ← 葡萄糖-6-磷酸 → 糖酵解',
+  'β氧化 → 乙酰CoA → TCA循环',
+  '氨基酸分解代谢 → TCA循环中间产物 / 尿素循环',
+  '尿素循环 ↔ TCA循环（通过延胡索酸）',
 ]
 </script>
 
@@ -33,13 +33,13 @@ const connections = [
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <h1>Metabolic Network</h1>
+            <h1>代谢网络</h1>
             <p class="page-subtitle">
-              Understand how metabolic pathways interconnect. Each hub molecule serves as a bridge between multiple metabolic routes.
+              理解各代谢路径之间的相互联系。每个枢纽分子都是连接多条代谢通路的桥梁。
             </p>
           </div>
           <router-link to="/pathways" class="btn btn-outline btn-sm header-cta">
-            View Pathways
+            查看路径
             <ArrowRight :size="14" :stroke-width="2" />
           </router-link>
         </div>
@@ -49,14 +49,14 @@ const connections = [
       <div class="card network-canvas">
         <div class="canvas-placeholder">
           <NetworkIcon :size="48" :stroke-width="1" />
-          <h3>Interactive Network Visualization</h3>
-          <p>An interactive metabolic network diagram will be integrated in a future update.</p>
+          <h3>交互式网络可视化</h3>
+          <p>交互式代谢网络图将在后续版本中集成。</p>
         </div>
       </div>
 
       <!-- Key Pathway Connections -->
       <div class="connections-section">
-        <h2>Core Pathway Connections</h2>
+        <h2>核心路径连接</h2>
         <div class="connections-list">
           <div v-for="(conn, i) in connections" :key="i" class="card connection-item">
             <span class="conn-number">{{ i + 1 }}</span>
@@ -67,8 +67,8 @@ const connections = [
 
       <!-- Hub Molecules -->
       <div class="hubs-section">
-        <h2>Key Hub Molecules</h2>
-        <p class="section-desc">These molecules serve as critical junctions in the metabolic network.</p>
+        <h2>关键枢纽分子</h2>
+        <p class="section-desc">这些分子是代谢网络中的关键交汇点。</p>
         <div class="hubs-details">
           <div v-for="hub in hubs" :key="hub.name" class="card hub-detail-item">
             <div class="card-body hub-body">
