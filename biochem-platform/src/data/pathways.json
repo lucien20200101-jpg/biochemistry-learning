@@ -1,7 +1,7 @@
 [
   {
     "id": "glycolysis",
-    "icon": "🔥",
+    "icon": "flame",
     "name": "糖酵解",
     "english": "Glycolysis",
     "chapter": "糖代谢",
@@ -30,7 +30,7 @@
   },
   {
     "id": "gluconeogenesis",
-    "icon": "🔄",
+    "icon": "refresh-cw",
     "name": "糖异生",
     "english": "Gluconeogenesis",
     "chapter": "糖代谢",
@@ -58,7 +58,7 @@
   },
   {
     "id": "tca-cycle",
-    "icon": "🔁",
+    "icon": "rotate-cw",
     "name": "TCA 循环",
     "english": "Tricarboxylic Acid Cycle",
     "chapter": "能量代谢",
@@ -87,7 +87,7 @@
   },
   {
     "id": "oxidative-phosphorylation",
-    "icon": "⚡",
+    "icon": "zap",
     "name": "氧化磷酸化",
     "english": "Oxidative Phosphorylation",
     "chapter": "能量代谢",
@@ -116,7 +116,7 @@
   },
   {
     "id": "pentose-phosphate",
-    "icon": "🧪",
+    "icon": "flask-conical",
     "name": "磷酸戊糖途径",
     "english": "Pentose Phosphate Pathway",
     "chapter": "糖代谢",
@@ -143,7 +143,7 @@
   },
   {
     "id": "fatty-acid-oxidation",
-    "icon": "🫧",
+    "icon": "droplets",
     "name": "脂肪酸β-氧化",
     "english": "Fatty Acid β-Oxidation",
     "chapter": "脂质代谢",
@@ -171,7 +171,7 @@
   },
   {
     "id": "fatty-acid-synthesis",
-    "icon": "🏗️",
+    "icon": "layers",
     "name": "脂肪酸合成",
     "english": "Fatty Acid Synthesis",
     "chapter": "脂质代谢",
@@ -199,7 +199,7 @@
   },
   {
     "id": "urea-cycle",
-    "icon": "♻️",
+    "icon": "recycle",
     "name": "尿素循环",
     "english": "Urea Cycle",
     "chapter": "氨基酸与含氮代谢",

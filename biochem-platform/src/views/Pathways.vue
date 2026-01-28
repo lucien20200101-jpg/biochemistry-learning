@@ -1,5 +1,17 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import {
+  Flame,
+  RefreshCw,
+  RotateCw,
+  Zap,
+  FlaskConical,
+  Droplets,
+  Layers,
+  Recycle,
+  ArrowRight,
+  BookOpen
+} from 'lucide-vue-next'
 import pathways from '../data/pathways.json'
 
 const loading = ref(true)
@@ -7,6 +19,21 @@ const loading = ref(true)
 onMounted(() => {
   setTimeout(() => { loading.value = false }, 300)
 })
+
+const iconMap = {
+  'flame': Flame,
+  'refresh-cw': RefreshCw,
+  'rotate-cw': RotateCw,
+  'zap': Zap,
+  'flask-conical': FlaskConical,
+  'droplets': Droplets,
+  'layers': Layers,
+  'recycle': Recycle,
+}
+
+function getIcon(iconName) {
+  return iconMap[iconName] || FlaskConical
+}
 </script>
 
 <template>
@@ -16,14 +43,14 @@ onMounted(() => {
       <div class="page-header">
         <div class="page-header-row">
           <div>
-            <h1>八大核心代谢路径</h1>
+            <h1>Metabolic Pathways</h1>
             <p class="page-subtitle">
-              系统学习生物化学中八大核心代谢路径，掌握关键反应步骤、酶、调控机制与临床关联。
+              Master the eight core biochemical pathways. Understand key reactions, enzymes, regulation mechanisms, and clinical correlations.
             </p>
           </div>
           <router-link to="/quiz" class="btn btn-primary btn-sm header-cta">
-            进入题库
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            Practice Quiz
+            <ArrowRight :size="14" :stroke-width="2" />
           </router-link>
         </div>
       </div>
@@ -42,10 +69,10 @@ onMounted(() => {
       <!-- Empty State -->
       <div v-else-if="pathways.length === 0" class="empty-state">
         <div class="empty-icon">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+          <BookOpen :size="48" :stroke-width="1" />
         </div>
-        <h3>暂无代谢路径数据</h3>
-        <p>路径数据正在整理中，请稍后再来查看。</p>
+        <h3>No pathways available</h3>
+        <p>Pathway data is being prepared. Please check back later.</p>
       </div>
 
       <!-- Pathway Grid -->
@@ -58,15 +85,17 @@ onMounted(() => {
         >
           <div class="card-body">
             <div class="pw-top">
-              <span class="pw-icon">{{ pw.icon }}</span>
+              <span class="pw-icon">
+                <component :is="getIcon(pw.icon)" :size="20" :stroke-width="1.5" />
+              </span>
               <span class="badge">{{ pw.location }}</span>
             </div>
             <h3 class="pw-name">{{ pw.name }}</h3>
             <p class="pw-english">{{ pw.english }}</p>
             <p class="pw-summary">{{ pw.summary }}</p>
             <span class="pw-link">
-              查看详情
-              <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              View details
+              <ArrowRight :size="14" :stroke-width="2" class="arrow" />
             </span>
           </div>
         </router-link>
@@ -88,8 +117,8 @@ onMounted(() => {
 }
 
 .empty-icon {
-  margin-bottom: 16px;
-  opacity: 0.7;
+  margin-bottom: 20px;
+  color: var(--muted-light);
 }
 
 .empty-state h3 {
@@ -104,7 +133,7 @@ onMounted(() => {
 
 /* --- Pathway Grid --- */
 .pathway-grid {
-  gap: 20px;
+  gap: 16px;
 }
 
 .pathway-card {
@@ -116,8 +145,8 @@ onMounted(() => {
 .pathway-card .card-body {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 28px;
+  gap: 12px;
+  padding: 28px 32px;
 }
 
 .pw-top {
@@ -127,32 +156,41 @@ onMounted(() => {
 }
 
 .pw-icon {
-  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+  color: var(--text);
 }
 
 .pw-name {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1.0625rem;
+  font-weight: 500;
   color: var(--text);
+  margin-top: 4px;
 }
 
 .pw-english {
   font-size: 0.8125rem;
   color: var(--muted-light);
-  margin-top: -6px;
+  margin-top: -8px;
+  letter-spacing: 0.01em;
 }
 
 .pw-summary {
   font-size: 0.875rem;
   color: var(--muted);
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 .pw-link {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: var(--primary);
-  margin-top: 4px;
+  color: var(--text);
+  margin-top: 8px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -163,13 +201,16 @@ onMounted(() => {
 }
 
 .pathway-card:hover .pw-link .arrow {
-  transform: translateX(3px);
+  transform: translateX(4px);
 }
 
 @media (max-width: 768px) {
   .page-header-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .pathway-card .card-body {
+    padding: 24px;
   }
 }
 </style>

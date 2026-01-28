@@ -1,11 +1,12 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import { Atom } from 'lucide-vue-next'
 
 const route = useRoute()
 
 const navLinks = [
   { to: '/', label: '首页' },
-  { to: '/pathways', label: '八大代谢路径' },
+  { to: '/pathways', label: '代谢路径' },
   { to: '/network', label: '代谢网络' },
   { to: '/quiz', label: '练习题库' },
 ]
@@ -18,17 +19,7 @@ const navLinks = [
       <div class="nav-inner container">
         <router-link to="/" class="nav-brand">
           <span class="brand-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="2"/>
-              <path d="M12 2v4"/>
-              <path d="M12 18v4"/>
-              <path d="M4.93 4.93l2.83 2.83"/>
-              <path d="M16.24 16.24l2.83 2.83"/>
-              <path d="M2 12h4"/>
-              <path d="M18 12h4"/>
-              <path d="M4.93 19.07l2.83-2.83"/>
-              <path d="M16.24 7.76l2.83-2.83"/>
-            </svg>
+            <Atom :size="18" :stroke-width="1.5" />
           </span>
           <span class="brand-text">BioChem</span>
         </router-link>
@@ -55,8 +46,8 @@ const navLinks = [
     <!-- Footer -->
     <footer class="site-footer">
       <div class="container footer-inner">
-        <p class="footer-text">生物化学学习辅助平台</p>
-        <p class="footer-sub">让代谢学习更高效</p>
+        <p class="footer-text">BioChem Learning Platform</p>
+        <p class="footer-sub">Mastering metabolism, one pathway at a time</p>
       </div>
     </footer>
   </div>
@@ -75,10 +66,10 @@ const navLinks = [
   top: 0;
   z-index: 100;
   height: var(--nav-height);
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(250, 250, 249, 0.92);
   border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .nav-inner {
@@ -91,9 +82,9 @@ const navLinks = [
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  font-size: 1rem;
+  gap: 12px;
+  font-weight: 500;
+  font-size: 0.9375rem;
   color: var(--text);
   text-decoration: none;
   letter-spacing: -0.02em;
@@ -103,17 +94,11 @@ const navLinks = [
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
   background: var(--text);
-  color: white;
-}
-
-.brand-icon svg {
-  display: block;
-  width: 18px;
-  height: 18px;
+  color: var(--card);
 }
 
 .brand-text {
@@ -123,13 +108,13 @@ const navLinks = [
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .nav-link {
-  padding: 7px 16px;
+  padding: 8px 16px;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--muted);
   text-decoration: none;
   border-radius: var(--radius-sm);
@@ -138,26 +123,24 @@ const navLinks = [
 
 .nav-link:hover {
   color: var(--text);
-  background-color: var(--bg-secondary);
 }
 
 .nav-link.active {
   color: var(--text);
-  background-color: var(--bg-secondary);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* --- Main Content --- */
 .main-content {
   flex: 1;
-  padding-top: 40px;
-  padding-bottom: 80px;
+  padding-top: 48px;
+  padding-bottom: 96px;
 }
 
 /* --- Footer --- */
 .site-footer {
   border-top: 1px solid var(--border);
-  padding: 32px 0;
+  padding: 40px 0;
   background: var(--card);
 }
 
@@ -169,8 +152,9 @@ const navLinks = [
 
 .footer-text {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text);
+  letter-spacing: -0.01em;
 }
 
 .footer-sub {
@@ -184,7 +168,7 @@ const navLinks = [
     gap: 0;
   }
   .nav-link {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 0.8125rem;
   }
   .brand-text {
@@ -192,15 +176,23 @@ const navLinks = [
   }
   .footer-inner {
     flex-direction: column;
-    gap: 4px;
+    gap: 8px;
     text-align: center;
+  }
+  .main-content {
+    padding-top: 32px;
+    padding-bottom: 64px;
   }
 }
 
 @media (max-width: 480px) {
   .nav-link {
-    padding: 6px 8px;
+    padding: 8px 10px;
     font-size: 0.75rem;
+  }
+  .brand-icon {
+    width: 32px;
+    height: 32px;
   }
 }
 </style>

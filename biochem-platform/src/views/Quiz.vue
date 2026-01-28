@@ -1,6 +1,21 @@
 <script setup>
 import { ref, computed, onUnmounted } from 'vue'
 import { useQuizStore } from '../stores/quiz'
+import {
+  FileText,
+  Briefcase,
+  Check,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  RefreshCw,
+  Trash2,
+  CircleCheck,
+  Frown,
+  Meh,
+  Flag
+} from 'lucide-vue-next'
 
 const store = useQuizStore()
 
@@ -102,13 +117,6 @@ function optionClass(question, index) {
   if (isSelected && index !== question.answer) return 'option-wrong'
   return 'option-disabled'
 }
-
-const chapterIcons = {
-  '糖代谢': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
-  '能量代谢': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>',
-  '脂质代谢': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c6.23-.05 7.87-5.57 7.5-10-.36-4.34-3.95-9.96-7.5-10-3.55.04-7.14 5.66-7.5 10-.37 4.43 1.27 9.95 7.5 10z"/></svg>',
-  '氨基酸代谢': '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 9.3V1.99"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/><path d="M5.58 16.5h12.85"/></svg>'
-}
 </script>
 
 <template>
@@ -121,19 +129,19 @@ const chapterIcons = {
         <div class="page-header">
           <div class="page-header-row">
             <div>
-              <h1>练习题库</h1>
+              <h1>Practice Quiz</h1>
               <p class="page-subtitle">
-                通过精选练习题巩固代谢知识，涵盖概念辨析、能量计算、调控机制与临床关联。
+                Test your understanding of metabolic pathways with curated questions covering concepts, energy calculations, and clinical correlations.
               </p>
             </div>
             <div class="header-stats">
               <div class="header-stat">
                 <span class="header-stat-num">{{ store.filteredQuestions.length }}</span>
-                <span class="header-stat-label">题目</span>
+                <span class="header-stat-label">Questions</span>
               </div>
               <div class="header-stat">
                 <span class="header-stat-num wrong-color">{{ store.wrongQuestions.length }}</span>
-                <span class="header-stat-label">错题</span>
+                <span class="header-stat-label">Incorrect</span>
               </div>
             </div>
           </div>
@@ -146,16 +154,16 @@ const chapterIcons = {
             :class="{ 'tab-active': activeTab === 'practice' }"
             @click="activeTab = 'practice'"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
-            题库练习
+            <FileText :size="16" :stroke-width="2" />
+            Practice
           </button>
           <button
             class="tab-btn"
             :class="{ 'tab-active': activeTab === 'wrong' }"
             @click="activeTab = 'wrong'"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
-            错题本
+            <Briefcase :size="16" :stroke-width="2" />
+            Review
             <span v-if="store.wrongQuestions.length > 0" class="tab-badge">
               {{ store.wrongQuestions.length }}
             </span>
@@ -167,24 +175,23 @@ const chapterIcons = {
           <!-- Quick Actions -->
           <div class="quick-actions">
             <button class="btn btn-primary btn-lg" @click="handleStartQuiz(10)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-              随机 10 题
+              <CircleCheck :size="18" :stroke-width="2" />
+              Random 10 Questions
             </button>
             <button class="btn btn-outline btn-lg" @click="handleStartQuiz(store.filteredQuestions.length)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></svg>
-              全部 {{ store.filteredQuestions.length }} 题
+              <FileText :size="18" :stroke-width="2" />
+              All {{ store.filteredQuestions.length }} Questions
             </button>
           </div>
 
           <!-- Topic Selection -->
           <div class="section-heading">
-            <h2>按主题选择</h2>
-            <p class="text-muted">选择感兴趣的主题，进行针对性练习</p>
+            <h2>Select by Topic</h2>
+            <p class="text-muted">Choose a specific topic for focused practice</p>
           </div>
 
           <div v-for="(chapterTopics, chapter) in topicsByChapter" :key="chapter" class="chapter-group">
             <div class="chapter-label">
-              <span class="chapter-icon" v-html="chapterIcons[chapter] || ''"></span>
               {{ chapter }}
             </div>
             <div class="topic-grid">
@@ -197,9 +204,9 @@ const chapterIcons = {
                 <div class="card-body topic-body">
                   <div class="topic-info">
                     <h3 class="topic-name">{{ topic.name }}</h3>
-                    <span class="badge">{{ topic.count }} 题</span>
+                    <span class="badge">{{ topic.count }} Q</span>
                   </div>
-                  <span class="btn btn-primary btn-sm">开始</span>
+                  <span class="btn btn-primary btn-sm">Start</span>
                 </div>
               </div>
             </div>
@@ -207,9 +214,9 @@ const chapterIcons = {
 
           <!-- Empty State -->
           <div v-if="store.filteredQuestions.length === 0" class="empty-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>
-            <h3>暂无题目</h3>
-            <p>请等待题库更新。</p>
+            <Flag :size="48" :stroke-width="1" />
+            <h3>No questions available</h3>
+            <p>Please check back later for updates.</p>
           </div>
         </template>
 
@@ -219,12 +226,12 @@ const chapterIcons = {
           <template v-if="store.wrongQuestions.length > 0">
             <div class="wrong-actions">
               <button class="btn btn-primary" @click="handleStartWrongQuiz()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                重新练习全部错题（{{ store.wrongQuestions.length }}）
+                <RefreshCw :size="16" :stroke-width="2" />
+                Review All ({{ store.wrongQuestions.length }})
               </button>
               <button class="btn btn-outline" @click="store.clearWrongList()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                清空错题本
+                <Trash2 :size="16" :stroke-width="2" />
+                Clear All
               </button>
             </div>
 
@@ -235,18 +242,15 @@ const chapterIcons = {
                     <div class="wrong-meta">
                       <span class="badge">{{ q.chapter }}</span>
                       <span class="badge">{{ q.topic }}</span>
-                      <span class="badge" :class="{ 'badge-primary': q.type === 'truefalse' }">
-                        {{ q.type === 'truefalse' ? '判断题' : '单选题' }}
-                      </span>
                     </div>
                     <p class="wrong-question">{{ q.question }}</p>
                   </div>
                   <button
                     class="btn btn-ghost btn-sm wrong-remove"
                     @click="store.removeWrongQuestion(q.id)"
-                    title="移除此题"
+                    title="Remove"
                   >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    <X :size="16" :stroke-width="2" />
                   </button>
                 </div>
               </div>
@@ -255,11 +259,11 @@ const chapterIcons = {
 
           <!-- Wrong Empty State -->
           <div v-else class="empty-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted-light)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-            <h3>错题本是空的</h3>
-            <p>完成练习后，答错的题目会自动收集到这里。答对已收录的错题时会自动移除。</p>
-            <button class="btn btn-primary" style="margin-top: 16px" @click="activeTab = 'practice'">
-              开始练习
+            <CircleCheck :size="48" :stroke-width="1" />
+            <h3>No incorrect answers</h3>
+            <p>Questions you answer incorrectly will appear here for review. Getting them right will remove them.</p>
+            <button class="btn btn-primary" style="margin-top: 20px" @click="activeTab = 'practice'">
+              Start Practice
             </button>
           </div>
         </template>
@@ -270,19 +274,19 @@ const chapterIcons = {
         <!-- Quiz Header -->
         <div class="quiz-header">
           <button class="btn btn-ghost btn-sm" @click="handleBackToLanding()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-            返回题库
+            <ChevronLeft :size="14" :stroke-width="2" />
+            Back
           </button>
           <div class="quiz-progress-info">
             <span class="timer-text">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <Clock :size="14" :stroke-width="2" />
               {{ formattedTime }}
             </span>
             <span class="progress-text">
               {{ store.currentIndex + 1 }} / {{ store.totalQuestions }}
             </span>
             <span v-if="store.allFinished" class="score-text">
-              得分：{{ store.correctCount }} / {{ store.totalQuestions }}
+              Score: {{ store.correctCount }} / {{ store.totalQuestions }}
             </span>
           </div>
         </div>
@@ -303,16 +307,7 @@ const chapterIcons = {
               <div class="q-meta">
                 <span class="badge">{{ store.currentQuestion.chapter }}</span>
                 <span class="badge">{{ store.currentQuestion.topic }}</span>
-                <span class="badge" :class="{
-                  'badge-primary': store.currentQuestion.type === 'truefalse'
-                }">
-                  {{ store.currentQuestion.type === 'truefalse' ? '判断题' : '单选题' }}
-                </span>
-                <span class="badge" :class="{
-                  'badge-primary': store.currentQuestion.difficulty === '进阶'
-                }">
-                  {{ store.currentQuestion.difficulty }}
-                </span>
+                <span class="badge">{{ store.currentQuestion.difficulty }}</span>
               </div>
 
               <!-- Question text -->
@@ -343,7 +338,7 @@ const chapterIcons = {
                   :disabled="store.userAnswers[store.currentQuestion.id] === undefined"
                   @click="store.submitAnswer(store.currentQuestion.id)"
                 >
-                  提交答案
+                  Submit Answer
                 </button>
 
                 <!-- Explanation after submit -->
@@ -354,12 +349,12 @@ const chapterIcons = {
                 >
                   <div class="explanation-header">
                     <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
-                      回答正确
+                      <Check :size="14" :stroke-width="2.5" />
+                      Correct
                     </span>
                     <span v-else class="explanation-badge wrong">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                      回答错误 — 正确答案：{{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? '正确 (T)' : '错误 (F)') : getOptionLabel(store.currentQuestion.answer) }}
+                      <X :size="14" :stroke-width="2.5" />
+                      Incorrect — Answer: {{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? 'True' : 'False') : getOptionLabel(store.currentQuestion.answer) }}
                     </span>
                   </div>
                   <p class="explanation-text">{{ store.currentQuestion.explanation }}</p>
@@ -375,8 +370,8 @@ const chapterIcons = {
               :disabled="store.currentIndex === 0"
               @click="store.prevQuestion()"
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              上一题
+              <ChevronLeft :size="14" :stroke-width="2" />
+              Previous
             </button>
 
             <!-- Question dots -->
@@ -402,23 +397,23 @@ const chapterIcons = {
               class="btn btn-outline btn-sm"
               @click="store.nextQuestion()"
             >
-              下一题
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              Next
+              <ChevronRight :size="14" :stroke-width="2" />
             </button>
             <button
               v-else
               class="btn btn-primary btn-sm"
               @click="handleFinishQuiz()"
             >
-              结束练习
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>
+              Finish
+              <Check :size="14" :stroke-width="2" />
             </button>
           </div>
 
           <!-- Finish quiz early -->
           <div v-if="store.answeredCount > 0 && store.currentIndex < store.totalQuestions - 1" class="finish-early">
             <button class="btn btn-ghost btn-sm" @click="handleFinishQuiz()">
-              提前结束本次练习
+              End early
             </button>
           </div>
         </div>
@@ -431,55 +426,55 @@ const chapterIcons = {
             <div class="card-body results-body">
               <!-- Result Icon -->
               <div class="results-icon" :class="store.accuracy >= 80 ? 'results-icon-good' : store.accuracy >= 50 ? 'results-icon-mid' : 'results-icon-bad'">
-                <svg v-if="store.accuracy >= 80" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-                <svg v-else-if="store.accuracy >= 50" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="8" x2="16" y1="15" y2="15"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
-                <svg v-else width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/></svg>
+                <CircleCheck v-if="store.accuracy >= 80" :size="40" :stroke-width="1.5" />
+                <Meh v-else-if="store.accuracy >= 50" :size="40" :stroke-width="1.5" />
+                <Frown v-else :size="40" :stroke-width="1.5" />
               </div>
 
-              <h2>练习完成</h2>
+              <h2>Practice Complete</h2>
               <p class="results-subtitle">
-                {{ store.accuracy >= 80 ? '表现优秀，继续保持！' : store.accuracy >= 50 ? '还不错，继续努力！' : '还需要多加练习，加油！' }}
+                {{ store.accuracy >= 80 ? 'Excellent work! Keep it up.' : store.accuracy >= 50 ? 'Good effort. Keep practicing.' : 'Keep studying. You\'ll improve.' }}
               </p>
 
               <!-- Stats -->
               <div class="results-stats">
                 <div class="results-stat">
                   <div class="stat-num">{{ store.answeredCount }}</div>
-                  <div class="stat-lbl">总题数</div>
+                  <div class="stat-lbl">Total</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num correct-num">{{ store.correctCount }}</div>
-                  <div class="stat-lbl">正确</div>
+                  <div class="stat-lbl">Correct</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num wrong-num">{{ store.wrongCount }}</div>
-                  <div class="stat-lbl">错误</div>
+                  <div class="stat-lbl">Incorrect</div>
                 </div>
                 <div class="results-stat">
                   <div class="stat-num accuracy-num">{{ store.accuracy }}%</div>
-                  <div class="stat-lbl">正确率</div>
+                  <div class="stat-lbl">Accuracy</div>
                 </div>
               </div>
 
               <!-- Time -->
               <div class="results-time">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                用时 {{ formattedTime }}
+                <Clock :size="16" :stroke-width="2" />
+                Time: {{ formattedTime }}
               </div>
 
               <!-- CTAs -->
               <div class="results-actions">
                 <button class="btn btn-primary btn-lg" @click="handleRetry()">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-                  再来一组
+                  <RefreshCw :size="18" :stroke-width="2" />
+                  Try Again
                 </button>
                 <button
                   v-if="store.wrongQuestions.length > 0"
                   class="btn btn-outline btn-lg"
                   @click="handleGoToWrong()"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12h.01"/><path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M22 13a18.15 18.15 0 0 1-20 0"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
-                  查看错题本（{{ store.wrongQuestions.length }}）
+                  <Briefcase :size="18" :stroke-width="2" />
+                  Review ({{ store.wrongQuestions.length }})
                 </button>
               </div>
             </div>
@@ -494,19 +489,19 @@ const chapterIcons = {
 <style scoped>
 /* --- Page Header --- */
 .page-header {
-  padding-top: 8px;
-  padding-bottom: 32px;
+  padding-top: 16px;
+  padding-bottom: 40px;
 }
 
 .page-header h1 {
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .page-header-row {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
+  gap: 32px;
 }
 
 .page-subtitle {
@@ -517,7 +512,7 @@ const chapterIcons = {
 
 .header-stats {
   display: flex;
-  gap: 24px;
+  gap: 32px;
   flex-shrink: 0;
 }
 
@@ -525,12 +520,12 @@ const chapterIcons = {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .header-stat-num {
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-size: 1.75rem;
+  font-weight: 500;
   color: var(--text);
   letter-spacing: -0.02em;
 }
@@ -549,7 +544,7 @@ const chapterIcons = {
   display: flex;
   gap: 4px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .tab-btn {
@@ -575,7 +570,7 @@ const chapterIcons = {
 
 .tab-active {
   color: var(--text);
-  border-bottom-color: var(--primary);
+  border-bottom-color: var(--text);
 }
 
 .tab-badge {
@@ -596,36 +591,30 @@ const chapterIcons = {
 .quick-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 36px;
+  margin-bottom: 48px;
 }
 
 /* --- Section Heading --- */
 .section-heading {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .section-heading h2 {
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 /* --- Chapter Groups --- */
 .chapter-group {
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
 .chapter-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.chapter-icon {
-  display: inline-flex;
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--muted);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .topic-grid {
@@ -642,20 +631,20 @@ const chapterIcons = {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  gap: 12px;
+  padding: 20px 24px;
+  gap: 16px;
 }
 
 .topic-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .topic-name {
   font-size: 0.9375rem;
-  font-weight: 600;
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -665,7 +654,7 @@ const chapterIcons = {
 .wrong-actions {
   display: flex;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .wrong-list {
@@ -679,7 +668,7 @@ const chapterIcons = {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 20px;
+  padding: 20px 24px;
 }
 
 .wrong-content {
@@ -691,7 +680,7 @@ const chapterIcons = {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .wrong-question {
@@ -716,11 +705,12 @@ const chapterIcons = {
 /* --- Empty State --- */
 .empty-state {
   text-align: center;
-  padding: 60px 24px;
+  padding: 80px 24px;
 }
 
 .empty-state svg {
-  margin: 0 auto 16px;
+  margin: 0 auto 20px;
+  color: var(--muted-light);
 }
 
 .empty-state h3 {
@@ -740,19 +730,19 @@ const chapterIcons = {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   padding-top: 0;
 }
 
 .quiz-progress-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
 
 .progress-text {
   font-size: 0.875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--muted);
 }
 
@@ -768,8 +758,8 @@ const chapterIcons = {
 
 .score-text {
   font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--primary);
+  font-weight: 500;
+  color: var(--text);
 }
 
 /* --- Progress Bar --- */
@@ -778,34 +768,34 @@ const chapterIcons = {
   height: 4px;
   background: var(--bg-secondary);
   border-radius: 2px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: var(--primary);
+  background: var(--text);
   border-radius: 2px;
   transition: width var(--transition-slow);
 }
 
 /* --- Question Card --- */
 .question-card .card-body {
-  padding: 32px;
+  padding: 36px;
 }
 
 .q-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .q-text {
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.65;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   color: var(--text);
 }
 
@@ -814,16 +804,16 @@ const chapterIcons = {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .option-btn {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 14px 18px;
+  gap: 14px;
+  padding: 16px 20px;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius);
   background: var(--card);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -835,8 +825,8 @@ const chapterIcons = {
 }
 
 .option-btn:hover:not(:disabled) {
-  border-color: var(--primary);
-  background: var(--primary-light);
+  border-color: var(--text);
+  background: var(--bg-secondary);
 }
 
 .option-label {
@@ -848,7 +838,7 @@ const chapterIcons = {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.8125rem;
   color: var(--muted);
   margin-top: 1px;
@@ -860,13 +850,13 @@ const chapterIcons = {
 
 /* Option States */
 .option-selected {
-  border-color: var(--primary);
-  background: var(--primary-light);
+  border-color: var(--text);
+  background: var(--bg-secondary);
 }
 
 .option-selected .option-label {
-  background: var(--primary);
-  color: var(--primary-foreground);
+  background: var(--text);
+  color: var(--card);
 }
 
 .option-correct {
@@ -898,13 +888,13 @@ const chapterIcons = {
 .q-actions {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 /* --- Explanation --- */
 .explanation-box {
   border-radius: var(--radius);
-  padding: 20px;
+  padding: 24px;
 }
 
 .explanation-correct {
@@ -918,7 +908,7 @@ const chapterIcons = {
 }
 
 .explanation-header {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .explanation-badge {
@@ -927,8 +917,8 @@ const chapterIcons = {
   gap: 6px;
   font-size: 0.8125rem;
   font-weight: 600;
-  padding: 4px 12px;
-  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
 }
 
 .explanation-badge.correct {
@@ -943,7 +933,7 @@ const chapterIcons = {
 
 .explanation-text {
   font-size: 0.9375rem;
-  line-height: 1.75;
+  line-height: 1.8;
   color: var(--text-secondary);
 }
 
@@ -952,8 +942,8 @@ const chapterIcons = {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 20px;
-  gap: 12px;
+  margin-top: 24px;
+  gap: 16px;
 }
 
 .q-dots {
@@ -981,14 +971,14 @@ const chapterIcons = {
 }
 
 .q-dot:hover {
-  border-color: var(--primary);
-  color: var(--primary);
+  border-color: var(--text);
+  color: var(--text);
 }
 
 .dot-current {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  color: var(--primary);
+  border-color: var(--text);
+  background: var(--bg-secondary);
+  color: var(--text);
 }
 
 .dot-correct {
@@ -1004,9 +994,9 @@ const chapterIcons = {
 }
 
 .dot-answered {
-  border-color: var(--primary);
-  background: var(--primary-light);
-  color: var(--primary);
+  border-color: var(--text);
+  background: var(--bg-secondary);
+  color: var(--text);
   opacity: 0.6;
 }
 
@@ -1014,12 +1004,12 @@ const chapterIcons = {
 .finish-early {
   display: flex;
   justify-content: center;
-  margin-top: 16px;
+  margin-top: 20px;
 }
 
 /* --- Results Page --- */
 .results-page {
-  padding-top: 40px;
+  padding-top: 48px;
   display: flex;
   justify-content: center;
 }
@@ -1031,7 +1021,7 @@ const chapterIcons = {
 
 .results-body {
   text-align: center;
-  padding: 48px 40px;
+  padding: 56px 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1041,10 +1031,10 @@ const chapterIcons = {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 72px;
-  height: 72px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .results-icon-good {
@@ -1069,14 +1059,14 @@ const chapterIcons = {
 .results-subtitle {
   font-size: 0.9375rem;
   color: var(--muted);
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
 .results-stats {
   display: flex;
   justify-content: center;
-  gap: 32px;
-  margin-bottom: 20px;
+  gap: 36px;
+  margin-bottom: 24px;
   width: 100%;
 }
 
@@ -1089,7 +1079,7 @@ const chapterIcons = {
 
 .stat-num {
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--text);
   letter-spacing: -0.02em;
 }
@@ -1103,7 +1093,7 @@ const chapterIcons = {
 }
 
 .accuracy-num {
-  color: var(--primary);
+  color: var(--text);
 }
 
 .stat-lbl {
@@ -1114,11 +1104,11 @@ const chapterIcons = {
 .results-time {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 0.875rem;
   color: var(--muted);
-  margin-bottom: 28px;
-  padding: 8px 16px;
+  margin-bottom: 32px;
+  padding: 10px 20px;
   background: var(--bg-secondary);
   border-radius: var(--radius-full);
 }
@@ -1137,7 +1127,7 @@ const chapterIcons = {
   }
 
   .results-stats {
-    gap: 20px;
+    gap: 24px;
   }
 
   .stat-num {
@@ -1152,7 +1142,7 @@ const chapterIcons = {
 
   .header-stats {
     flex-direction: row;
-    gap: 32px;
+    gap: 40px;
   }
 
   .topic-grid {
@@ -1168,7 +1158,7 @@ const chapterIcons = {
   }
 
   .question-card .card-body {
-    padding: 20px;
+    padding: 24px;
   }
 
   .q-nav {
@@ -1176,11 +1166,11 @@ const chapterIcons = {
   }
 
   .results-body {
-    padding: 32px 20px;
+    padding: 40px 24px;
   }
 
   .results-stats {
-    gap: 16px;
+    gap: 20px;
   }
 
   .results-actions {
@@ -1193,7 +1183,7 @@ const chapterIcons = {
   }
 
   .tab-btn {
-    padding: 10px 14px;
+    padding: 12px 16px;
     font-size: 0.8125rem;
   }
 }
