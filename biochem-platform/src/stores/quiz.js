@@ -207,6 +207,22 @@ export const useQuizStore = defineStore('quiz', () => {
     return totalQuestions.value > 0 && answeredCount.value === totalQuestions.value
   })
 
+  const progressCount = computed(() => {
+    let count = 0
+    for (const q of quizQuestions.value) {
+      if (submitted.value[q.id]) {
+        count++
+        continue
+      }
+      const answer = userAnswers.value[q.id]
+      if (answer === undefined || answer === null) continue
+      if (typeof answer === 'number') count++
+      else if (typeof answer === 'string' && answer.trim()) count++
+      else if (Array.isArray(answer) && answer.some(a => typeof a === 'string' && a.trim())) count++
+    }
+    return count
+  })
+
   const elapsedSeconds = computed(() => {
     if (!startTime.value) return 0
     const end = endTime.value || Date.now()
@@ -306,6 +322,21 @@ export const useQuizStore = defineStore('quiz', () => {
   function selectAnswer(questionId, optionIndex) {
     if (submitted.value[questionId]) return
     userAnswers.value[questionId] = optionIndex
+  }
+
+  function setTextAnswer(questionId, text) {
+    userAnswers.value[questionId] = text
+  }
+
+  function setBlankAnswer(questionId, index, text) {
+    if (!Array.isArray(userAnswers.value[questionId])) {
+      const q = quizQuestions.value.find(q => q.id === questionId)
+      const blanks = q?.blanks || 1
+      userAnswers.value[questionId] = new Array(blanks).fill('')
+    }
+    const arr = [...userAnswers.value[questionId]]
+    arr[index] = text
+    userAnswers.value[questionId] = arr
   }
 
   function submitAnswer(questionId) {
@@ -487,6 +518,7 @@ export const useQuizStore = defineStore('quiz', () => {
     wrongStats,
     isQuizActive,
     allFinished,
+    progressCount,
     elapsedSeconds,
     // actions
     setChapter,
@@ -496,6 +528,8 @@ export const useQuizStore = defineStore('quiz', () => {
     startWrongQuiz,
     startSingleWrongQuiz,
     selectAnswer,
+    setTextAnswer,
+    setBlankAnswer,
     submitAnswer,
     goToQuestion,
     nextQuestion,

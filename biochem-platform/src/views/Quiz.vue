@@ -170,6 +170,9 @@ function getTypeLabel(type) {
     case 'single': return '单选题'
     case 'truefalse': return '判断题'
     case 'multi': return '多选题'
+    case 'fill-blank': return '填空题'
+    case 'definition': return '名词解释'
+    case 'short-answer': return '简答题'
     default: return '题目'
   }
 }
@@ -277,6 +280,23 @@ function optionClass(question, index) {
   if (index === question.answer) return 'option-correct'
   if (isSelected && index !== question.answer) return 'option-wrong'
   return 'option-disabled'
+}
+
+function isChoiceType(type) {
+  return type === 'single' || type === 'truefalse' || type === 'multi'
+}
+
+function hasAnswer(q) {
+  const answer = store.userAnswers[q.id]
+  if (answer === undefined || answer === null) return false
+  if (typeof answer === 'number') return true
+  if (typeof answer === 'string') return answer.trim().length > 0
+  if (Array.isArray(answer)) return answer.some(a => typeof a === 'string' && a.trim().length > 0)
+  return false
+}
+
+function questionStem(q) {
+  return q.question || q.prompt || ''
 }
 </script>
 
@@ -430,6 +450,9 @@ function optionClass(question, index) {
                   <option value="all">全部题型</option>
                   <option value="single">单选题</option>
                   <option value="truefalse">判断题</option>
+                  <option value="fill-blank">填空题</option>
+                  <option value="definition">名词解释</option>
+                  <option value="short-answer">简答题</option>
                 </select>
 
                 <select class="filter-select" v-model="filterChapter">
@@ -546,7 +569,7 @@ function optionClass(question, index) {
         <div class="progress-bar-track">
           <div
             class="progress-bar-fill"
-            :style="{ width: ((store.answeredCount / store.totalQuestions) * 100) + '%' }"
+            :style="{ width: ((store.progressCount / store.totalQuestions) * 100) + '%' }"
           ></div>
         </div>
 
@@ -556,61 +579,91 @@ function optionClass(question, index) {
             <div class="card-body">
               <!-- Question meta -->
               <div class="q-meta">
+                <span class="badge type-badge">{{ getTypeLabel(store.currentQuestion.type) }}</span>
                 <span class="badge">{{ store.currentQuestion.chapter }}</span>
                 <span class="badge">{{ store.currentQuestion.topic }}</span>
                 <span class="badge">{{ store.currentQuestion.difficulty }}</span>
               </div>
 
               <!-- Question text -->
-              <h3 class="q-text">{{ store.currentQuestion.question }}</h3>
+              <h3 class="q-text">{{ questionStem(store.currentQuestion) }}</h3>
 
-              <!-- Options -->
-              <div class="options-list">
-                <button
-                  v-for="(opt, idx) in store.currentQuestion.options"
-                  :key="idx"
-                  class="option-btn"
-                  :class="optionClass(store.currentQuestion, idx)"
-                  :disabled="!!store.submitted[store.currentQuestion.id]"
-                  @click="store.selectAnswer(store.currentQuestion.id, idx)"
-                >
-                  <span class="option-label">
-                    {{ store.currentQuestion.type === 'truefalse' ? (idx === 0 ? 'T' : 'F') : getOptionLabel(idx) }}
-                  </span>
-                  <span class="option-text">{{ opt }}</span>
-                </button>
-              </div>
-
-              <!-- Submit / Explanation -->
-              <div class="q-actions">
-                <button
-                  v-if="!store.submitted[store.currentQuestion.id]"
-                  class="btn btn-primary"
-                  :disabled="store.userAnswers[store.currentQuestion.id] === undefined"
-                  @click="store.submitAnswer(store.currentQuestion.id)"
-                >
-                  提交答案
-                </button>
-
-                <!-- Explanation after submit -->
-                <div
-                  v-if="store.submitted[store.currentQuestion.id]"
-                  class="explanation-box"
-                  :class="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer ? 'explanation-correct' : 'explanation-wrong'"
-                >
-                  <div class="explanation-header">
-                    <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
-                      <Check :size="14" :stroke-width="2.5" />
-                      正确
+              <!-- === Choice Input (single / truefalse) === -->
+              <template v-if="isChoiceType(store.currentQuestion.type)">
+                <div class="options-list">
+                  <button
+                    v-for="(opt, idx) in store.currentQuestion.options"
+                    :key="idx"
+                    class="option-btn"
+                    :class="optionClass(store.currentQuestion, idx)"
+                    :disabled="!!store.submitted[store.currentQuestion.id]"
+                    @click="store.selectAnswer(store.currentQuestion.id, idx)"
+                  >
+                    <span class="option-label">
+                      {{ store.currentQuestion.type === 'truefalse' ? (idx === 0 ? 'T' : 'F') : getOptionLabel(idx) }}
                     </span>
-                    <span v-else class="explanation-badge wrong">
-                      <X :size="14" :stroke-width="2.5" />
-                      错误 — 正确答案：{{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? '正确' : '错误') : getOptionLabel(store.currentQuestion.answer) }}
-                    </span>
-                  </div>
-                  <p class="explanation-text">{{ store.currentQuestion.explanation }}</p>
+                    <span class="option-text">{{ opt }}</span>
+                  </button>
                 </div>
-              </div>
+
+                <div class="q-actions">
+                  <button
+                    v-if="!store.submitted[store.currentQuestion.id]"
+                    class="btn btn-primary"
+                    :disabled="store.userAnswers[store.currentQuestion.id] === undefined"
+                    @click="store.submitAnswer(store.currentQuestion.id)"
+                  >
+                    提交答案
+                  </button>
+
+                  <div
+                    v-if="store.submitted[store.currentQuestion.id]"
+                    class="explanation-box"
+                    :class="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer ? 'explanation-correct' : 'explanation-wrong'"
+                  >
+                    <div class="explanation-header">
+                      <span v-if="store.userAnswers[store.currentQuestion.id] === store.currentQuestion.answer" class="explanation-badge correct">
+                        <Check :size="14" :stroke-width="2.5" />
+                        正确
+                      </span>
+                      <span v-else class="explanation-badge wrong">
+                        <X :size="14" :stroke-width="2.5" />
+                        错误 — 正确答案：{{ store.currentQuestion.type === 'truefalse' ? (store.currentQuestion.answer === 0 ? '正确' : '错误') : getOptionLabel(store.currentQuestion.answer) }}
+                      </span>
+                    </div>
+                    <p class="explanation-text">{{ store.currentQuestion.explanation }}</p>
+                  </div>
+                </div>
+              </template>
+
+              <!-- === Fill-blank Input === -->
+              <template v-else-if="store.currentQuestion.type === 'fill-blank'">
+                <div class="blanks-list">
+                  <div v-for="n in (store.currentQuestion.blanks || 1)" :key="n" class="blank-item">
+                    <label class="blank-label">空格 {{ n }}</label>
+                    <input
+                      class="input blank-input"
+                      type="text"
+                      :placeholder="'请填写第 ' + n + ' 个空'"
+                      :value="(store.userAnswers[store.currentQuestion.id] || [])[n - 1] || ''"
+                      @input="store.setBlankAnswer(store.currentQuestion.id, n - 1, $event.target.value)"
+                    />
+                  </div>
+                </div>
+              </template>
+
+              <!-- === Definition / Short Answer Input === -->
+              <template v-else-if="store.currentQuestion.type === 'definition' || store.currentQuestion.type === 'short-answer'">
+                <div class="text-answer-area">
+                  <textarea
+                    class="input text-answer"
+                    :rows="store.currentQuestion.type === 'definition' ? 4 : 8"
+                    :placeholder="store.currentQuestion.type === 'definition' ? '请输入名词解释...' : '请输入你的回答...'"
+                    :value="store.userAnswers[store.currentQuestion.id] || ''"
+                    @input="store.setTextAnswer(store.currentQuestion.id, $event.target.value)"
+                  ></textarea>
+                </div>
+              </template>
             </div>
           </div>
 
@@ -635,7 +688,7 @@ function optionClass(question, index) {
                   'dot-current': i === store.currentIndex,
                   'dot-correct': store.submitted[q.id] && store.userAnswers[q.id] === q.answer,
                   'dot-wrong': store.submitted[q.id] && store.userAnswers[q.id] !== q.answer,
-                  'dot-answered': !store.submitted[q.id] && store.userAnswers[q.id] !== undefined,
+                  'dot-answered': !store.submitted[q.id] && hasAnswer(q),
                 }"
                 @click="store.goToQuestion(i)"
               >
@@ -662,7 +715,7 @@ function optionClass(question, index) {
           </div>
 
           <!-- Finish quiz early -->
-          <div v-if="store.answeredCount > 0 && store.currentIndex < store.totalQuestions - 1" class="finish-early">
+          <div v-if="store.progressCount > 0 && store.currentIndex < store.totalQuestions - 1" class="finish-early">
             <button class="btn btn-ghost btn-sm" @click="handleFinishQuiz()">
               提前结束
             </button>
@@ -1418,6 +1471,42 @@ function optionClass(question, index) {
   background: var(--bg-secondary);
   color: var(--text);
   opacity: 0.6;
+}
+
+/* --- Fill-blank Input --- */
+.blanks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.blank-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.blank-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.blank-input {
+  max-width: 480px;
+}
+
+/* --- Text Answer (definition / short-answer) --- */
+.text-answer-area {
+  margin-bottom: 28px;
+}
+
+.text-answer {
+  resize: vertical;
+  min-height: 100px;
+  line-height: var(--leading-relaxed);
+  font-family: var(--font-sans);
 }
 
 /* --- Finish Early --- */
