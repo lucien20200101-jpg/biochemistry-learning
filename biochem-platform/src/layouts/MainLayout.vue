@@ -21,7 +21,7 @@ const navLinks = [
           <span class="brand-icon">
             <Atom :size="18" :stroke-width="1.5" />
           </span>
-          <span class="brand-text">BioChem</span>
+          <span class="brand-text">生化学习</span>
         </router-link>
 
         <nav class="nav-links">

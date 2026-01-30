@@ -385,7 +385,7 @@ function questionStem(q) {
                 <div class="card-body topic-body">
                   <div class="topic-info">
                     <h3 class="topic-name">{{ topic.name }}</h3>
-                    <span class="badge">{{ topic.count }} Q</span>
+                    <span class="badge">{{ topic.count }} 题</span>
                   </div>
                   <span class="btn btn-primary btn-sm">开始</span>
                 </div>

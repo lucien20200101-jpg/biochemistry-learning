@@ -74,7 +74,6 @@ function goBack() {
           </span>
           <div>
             <h1>{{ pathway.name }}</h1>
-            <p class="detail-english">{{ pathway.english }}</p>
           </div>
         </div>
 
@@ -225,12 +224,6 @@ function goBack() {
 
 .detail-header h1 {
   margin-bottom: 4px;
-}
-
-.detail-english {
-  font-size: 0.9375rem;
-  color: var(--muted);
-  letter-spacing: 0.01em;
 }
 
 /* --- Meta --- */

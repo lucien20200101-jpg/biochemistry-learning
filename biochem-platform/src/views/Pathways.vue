@@ -91,7 +91,6 @@ function getIcon(iconName) {
               <span class="badge">{{ pw.location }}</span>
             </div>
             <h3 class="pw-name">{{ pw.name }}</h3>
-            <p class="pw-english">{{ pw.english }}</p>
             <p class="pw-summary">{{ pw.summary }}</p>
             <span class="pw-link">
               查看详情
@@ -171,13 +170,6 @@ function getIcon(iconName) {
   font-weight: 500;
   color: var(--text);
   margin-top: 4px;
-}
-
-.pw-english {
-  font-size: 0.8125rem;
-  color: var(--muted-light);
-  margin-top: -8px;
-  letter-spacing: 0.01em;
 }
 
 .pw-summary {
